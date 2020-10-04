@@ -1,7 +1,9 @@
 # k8s-gitops
 
-This guide describe a GitOps workflow without relying on more tools than absolutly necessary. We use established software like [`helm`](https://helm.sh/) and [`skaffold`](https://skaffold.dev/) to provide a modern [Push based](https://www.weave.works/blog/why-is-a-pull-vs-a-push-pipeline-important) CI/CD workflow.
+This guide describe a GitOps Kubernetes workflow without relying on server components. We provide a modern [Push based](https://www.weave.works/blog/why-is-a-pull-vs-a-push-pipeline-important) CI/CD workflow.
 
+
+## Helm introduction
 
 [Helm](https://helm.sh/) is the package manager for Kubernetes. It provides an interface to manage chart dependencies and releases.
 
@@ -20,7 +22,7 @@ This guide describe a GitOps workflow without relying on more tools than absolut
 
 You are able to manage a project composed of multiple microservices with a top-level [`umbrella-chart`](https://helm.sh/docs/howto/charts_tips_and_tricks/#complex-charts-with-many-dependencies). You can [override](https://helm.sh/docs/chart_template_guide/subcharts_and_globals/#global-chart-values) sub-chart values in your `values.yaml` of the `umbrella-chart`.
 
-## Structure
+## Project structure
 ```
 ├── umbrella-chart
 │   ├── charts
@@ -29,55 +31,63 @@ You are able to manage a project composed of multiple microservices with a top-l
 │   ├── Chart.lock
 |   ├── values.yaml
 │   └── Chart.yaml
+├── umbrella-state
+│   ├── sources.yaml
+|   ├── generated manifest...
 ```
 
-## The release "state"
+## The umbrella-state
 
-Helm guaranteed reproducable builds if you are working with the same `values.yaml` and `Chart.lock`. Because all files are checked into git we can reproduce the release at any commit.
+Helm guaranteed reproducable builds if you are working with the same `values.yaml` and `Chart.lock`. Because all files are checked into git we can reproduce the helm release at any commit. The umbrella-state refers to the single-source-of truth of an helm release.
 
-## Deploy
+## Automate the build, test and push step
 
-Now you can deploy your chart in your CI.
+If you practice CI you will test, build and deploy new images continuously in your CI. The image tag must be replaced in your helm manifest. In order to automate and standardize this process we use [kbld](https://github.com/k14s/kbld). `kbld` handles the workflow for building, pushing images. It integrates with helm, kustomize really well.
 
-```
-$ helm upgrade production ./umbrella-chart --atomic --create-namespace --wait --namespace production
-```
+### Define your application images
 
-This command will install your chart under the namespace `production` and will wait until all resources are in a ready state before marking the release as successful.
-
-## Automate the build, test, deploy process
-
-Until now we can template and release automated. This is not the full story. If you practice CI you will test, build and deploy new images continuously. The image tag must be replaced in your helm chart. In order to automate and standardize this process we use [skaffold](https://skaffold.dev/). Skaffold handles the workflow for building, pushing and deploying your application. It provides built-in helm support.
-
-Skaffold works with a single `skaffold.yaml`. You can find more information [here](https://skaffold.dev/docs/pipeline-stages/deployers/helm/) how helm is configured properly. In the example below you can see an example setup based on our conditions in the previous steps.
-
+You must create your sources in `release/sources.yaml` so that `kbld` is able to know which images belong to your application.
 ```yaml
-deploy:
-  helm:
-    releases:
-    - name: my-release
-      chartPath: ./umbrella-chart
-      namespace: production
-      artifactOverrides:
-        image: gcr.io/my-project/my-image # no tag present!
-        # Skaffold continuously tags your image, so no need to put one here.
+#! where to find order-service source
+---
+apiVersion: kbld.k14s.io/v1alpha1
+kind: Sources
+sources:
+- image: order-service
+  path: order-service
+---
+#! where to push app1 image
+---
+apiVersion: kbld.k14s.io/v1alpha1
+kind: ImageDestinations
+destinations:
+- image: order-service
+  newImage: docker.io/hk/order-service
 
-profiles:
-  - name: app
-    build:
-      artifacts:
-        - image: eu.gcr.io/doctama/order-service
-          context: order-service
-        - image: eu.gcr.io/doctama/user-service
-          context: user-service
 ```
 
-If you run `skaffold run -p app` skaffold will build, test and deploy your images. Images are tagged based on your [tagging](https://skaffold.dev/docs/pipeline-stages/taggers/) strategy and your helm chart is used to create a new helm release.
-Skaffold waits until your deployment was successfully. It provides additional commands to debug and monitor your application.
+### Prerender your release
 
-> Done! You have a versioned and standarzied flow how to manage a microservice applicationa at any size.
+This command will prerender your umbrella chart to `release/`, builds / push all necessary images and replace all references in your manifests.
 
-## Useful tools
+```sh
+helm template ./umbrella-chart --values my-vals.yml --verify --namespace production --create-namespace --output-dir release
+kbld -f release/
+```
 
-- [helm-diff](https://github.com/databus23/helm-diff) Calculate the diff between your local and latest deployed version.
+The artifact must be commited to git. This means we can rollback at any time, at any commit.
+
+## Automate the deploy step
+
+We use [kapp](https://github.com/k14s/kapp) to deploy the manifests to the kubernetes cluster. `Kapp` ensures that all ressources are properly installed.
+
+```
+$ kapp app-group deploy -g production --directory umbrella-state/
+```
+
+> Done! You have an automated CI/CD GitOps workflow to manage a microservice application at any size and without relying on server components like a kubernetes operator.
+
+## References
+
 - [helm-s3](https://github.com/hypnoglow/helm-s3) Share private Helm Charts with S3.
+- [k14s-kubernetes-tools](https://tanzu.vmware.com/content/blog/introducing-k14s-kubernetes-tools-simple-and-composable-tools-for-application-deployment)
