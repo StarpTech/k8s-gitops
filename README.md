@@ -39,13 +39,25 @@ This guide describe a [GitOps](https://www.weave.works/technologies/gitops/) Kub
 
 You are able to manage a project composed of multiple microservices with a top-level [`umbrella-chart`](https://helm.sh/docs/howto/charts_tips_and_tricks/#complex-charts-with-many-dependencies). You can [override](https://helm.sh/docs/chart_template_guide/subcharts_and_globals/#global-chart-values) sub-chart values in your `values.yaml` of the `umbrella-chart`.
 
+### Helm solves:
+
+- [X] Compose multiple configurations.
+- [X] Manage upgrades, rollbacks.
+- [X] Distribute configurations.
+
 ## The umbrella-state
 
 Helm guaranteed reproducable builds if you are working with the same helm values. Because all files are checked into git we can reproduce the helm release at any commit. The `umbrella-state` refers to the single-source-of truth of an helm release. The umbrella-state is updated automatically in the CI pipeline.
 
+### The umbrella-state solves:
+
+- [X] Desired system state versioned in Git.
+- [X] Single-source of truth.
+
 ## Build, Test and Push your images
 
 If you practice CI you will test, build and deploy new images continuously in your CI. The image tag must be replaced in your helm manifests. In order to automate and standardize this process we use [kbld](https://github.com/k14s/kbld). `kbld` handles the workflow for building, pushing images. It integrates with helm, kustomize really well.
+
 
 ### Define your application images
 
@@ -78,7 +90,14 @@ $ helm template ./umbrella-chart --values my-vals.yml --verify --namespace produ
 $ kbld -f umbrella-state/ --lock-output umbrella-state/kbld.lock.yml
 ```
 
-The artifact directory `umbrella-state/` must be commited to git. This means we can rollback at any time, at any commit.
+The artifact directory `umbrella-state/` must be commited to git. This means we can reproduce the state at any commit.
+
+### kbld / umbrella-state solves:
+
+- [X] One way to build, tag and push images.
+- [X] Agnostic to how manifests are generated.
+- [X] Desired system state versioned in Git.
+- [X] Single-source of truth.
 
 ## Deployment
 
@@ -87,6 +106,13 @@ We use [kapp](https://github.com/k14s/kapp) to deploy the manifests to the kuber
 ```
 $ kapp app-group deploy -g production --directory umbrella-state/
 ```
+
+### kapp solves:
+
+- [X] One way to diffing, labeling, deployment and deletion
+- [X] Agnostic to how manifests are generated.
+
+## :checkered_flag: Result
 
 > Done! You have an automated CI/CD GitOps workflow to manage a microservice application at any size and without relying on server components like a kubernetes operator.
 
