@@ -4,7 +4,7 @@
   <p align="center">The GitOps way to manage Kubernetes application at any size and without server components.</p>
 </p>
 
-This guide describe a GitOps Kubernetes workflow without relying on server components. We provide a modern [Push based](https://www.weave.works/blog/why-is-a-pull-vs-a-push-pipeline-important) CI/CD workflow.
+This guide describe a [GitOps](https://www.weave.works/technologies/gitops/) Kubernetes workflow without relying on server components. We provide a modern [Push based](https://www.weave.works/blog/why-is-a-pull-vs-a-push-pipeline-important) CI/CD workflow.
 
 ## Project structure
 ```
@@ -49,7 +49,7 @@ If you practice CI you will test, build and deploy new images continuously in yo
 
 ### Define your application images
 
-You must create some sources and image destinations in `release/sources.yaml` so that `kbld` is able to know which images belong to your application.
+You must create some sources and image destinations in `umbrella-state/sources.yaml` so that `kbld` is able to know which images belong to your application.
 ```yaml
 #! where to find order-service source
 ---
@@ -71,14 +71,14 @@ destinations:
 
 ### Release snapshot
 
-This command will prerender your umbrella chart to `release/`, builds / push all necessary images and replace all references in your manifests. The result is a complete static snapshot of your release.
+This command will prerender your umbrella chart to `umbrella-state/`, builds / push all necessary images and replace all references in your manifests. The result is a complete static snapshot of your release. The `kbld.lock.yml` represents a lock file of all tagged images. This is useful to ensure that the exact same image is used for the deployment.
 
 ```sh
-helm template ./umbrella-chart --values my-vals.yml --verify --namespace production --create-namespace --output-dir release
-kbld -f release/
+$ helm template ./umbrella-chart --values my-vals.yml --verify --namespace production --create-namespace --output-dir umbrella-state
+$ kbld -f umbrella-state/ --lock-output umbrella-state/kbld.lock.yml
 ```
 
-The artifact must be commited to git. This means we can rollback at any time, at any commit.
+The artifact directory `umbrella-state/` must be commited to git. This means we can rollback at any time, at any commit.
 
 ## Deployment
 
