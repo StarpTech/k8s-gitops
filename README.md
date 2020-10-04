@@ -6,6 +6,19 @@
 
 This guide describe a GitOps Kubernetes workflow without relying on server components. We provide a modern [Push based](https://www.weave.works/blog/why-is-a-pull-vs-a-push-pipeline-important) CI/CD workflow.
 
+## Project structure
+```
+├── umbrella-chart
+│   ├── charts
+│   │   ├── order-service
+│   │   └── user-service
+│   ├── Chart.lock
+|   ├── values.yaml
+│   └── Chart.yaml
+├── umbrella-state
+│   ├── sources.yaml
+|   ├── generated manifests...
+```
 
 ## Helm introduction
 
@@ -26,31 +39,17 @@ This guide describe a GitOps Kubernetes workflow without relying on server compo
 
 You are able to manage a project composed of multiple microservices with a top-level [`umbrella-chart`](https://helm.sh/docs/howto/charts_tips_and_tricks/#complex-charts-with-many-dependencies). You can [override](https://helm.sh/docs/chart_template_guide/subcharts_and_globals/#global-chart-values) sub-chart values in your `values.yaml` of the `umbrella-chart`.
 
-## Project structure
-```
-├── umbrella-chart
-│   ├── charts
-│   │   ├── order-service
-│   │   └── user-service
-│   ├── Chart.lock
-|   ├── values.yaml
-│   └── Chart.yaml
-├── umbrella-state
-│   ├── sources.yaml
-|   ├── generated manifest...
-```
-
 ## The umbrella-state
 
-Helm guaranteed reproducable builds if you are working with the same `values.yaml` and `Chart.lock`. Because all files are checked into git we can reproduce the helm release at any commit. The umbrella-state refers to the single-source-of truth of an helm release.
+Helm guaranteed reproducable builds if you are working with the same helm values. Because all files are checked into git we can reproduce the helm release at any commit. The `umbrella-state` refers to the single-source-of truth of an helm release. The umbrella-state is updated automatically in the CI pipeline.
 
-## Automate the build, test and push step
+## Build, Test and Push your images
 
-If you practice CI you will test, build and deploy new images continuously in your CI. The image tag must be replaced in your helm manifest. In order to automate and standardize this process we use [kbld](https://github.com/k14s/kbld). `kbld` handles the workflow for building, pushing images. It integrates with helm, kustomize really well.
+If you practice CI you will test, build and deploy new images continuously in your CI. The image tag must be replaced in your helm manifests. In order to automate and standardize this process we use [kbld](https://github.com/k14s/kbld). `kbld` handles the workflow for building, pushing images. It integrates with helm, kustomize really well.
 
 ### Define your application images
 
-You must create your sources in `release/sources.yaml` so that `kbld` is able to know which images belong to your application.
+You must create some sources and image destinations in `release/sources.yaml` so that `kbld` is able to know which images belong to your application.
 ```yaml
 #! where to find order-service source
 ---
@@ -60,7 +59,7 @@ sources:
 - image: order-service
   path: order-service
 ---
-#! where to push app1 image
+#! where to push order-service image
 ---
 apiVersion: kbld.k14s.io/v1alpha1
 kind: ImageDestinations
@@ -70,9 +69,9 @@ destinations:
 
 ```
 
-### Prerender your release
+### Release snapshot
 
-This command will prerender your umbrella chart to `release/`, builds / push all necessary images and replace all references in your manifests.
+This command will prerender your umbrella chart to `release/`, builds / push all necessary images and replace all references in your manifests. The result is a complete static snapshot of your release.
 
 ```sh
 helm template ./umbrella-chart --values my-vals.yml --verify --namespace production --create-namespace --output-dir release
@@ -81,7 +80,7 @@ kbld -f release/
 
 The artifact must be commited to git. This means we can rollback at any time, at any commit.
 
-## Automate the deploy step
+## Deployment
 
 We use [kapp](https://github.com/k14s/kapp) to deploy the manifests to the kubernetes cluster. `Kapp` ensures that all ressources are properly installed.
 
