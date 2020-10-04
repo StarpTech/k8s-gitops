@@ -1,7 +1,7 @@
 <p align="center">
   <img alt="logo" src="https://raw.githubusercontent.com/StarpTech/k8s-gitops/main/logo.png" />
   <h3 align="center"><a href="https://helm.sh/">Helm</a> + <a href="https://github.com/k14s/kbld">kbld</a>  + <a href="https://github.com/k14s/kapp">kapp</a></h3>
-  <p align="center">The GitOps way to manage Kubernetes application at any size and without server components.</p>
+  <p align="center">The GitOps workflow to manage Kubernetes application at any size (without server components).</p>
 </p>
 
 This guide describe a [GitOps](https://www.weave.works/technologies/gitops/) Kubernetes workflow without relying on server components. We provide a modern [Push based](https://www.weave.works/blog/why-is-a-pull-vs-a-push-pipeline-important) CI/CD workflow.
