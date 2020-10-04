@@ -1,5 +1,5 @@
 <p align="center">
-  <img alt="logo" src="https://raw.githubusercontent.com/StarpTech/k8s-gitops/master/logo.png" />
+  <img alt="logo" src="https://raw.githubusercontent.com/StarpTech/k8s-gitops/main/logo.png" />
   <h3 align="center"><a href="https://helm.sh/">Helm</a> + <a href="https://github.com/k14s/kbld">kbld</a>  + <a href="https://github.com/k14s/kapp">kapp</a></h3>
   <p align="center">The GitOps way to manage Kubernetes application at any size and without server components.</p>
 </p>
