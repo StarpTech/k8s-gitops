@@ -1,5 +1,6 @@
-# helmsphere
-The GitOps way to manage Helm Charts and Releases.
+# k8s-gitops
+
+This guide describe a GitOps workflow without relying on more tools than absolutly necessary. We use established software like [`helm`](https://helm.sh/) and [`skaffold`](https://skaffold.dev/) to provide a modern [Push based](https://www.weave.works/blog/why-is-a-pull-vs-a-push-pipeline-important) CI/CD workflow.
 
 
 [Helm](https://helm.sh/) is the package manager for Kubernetes. It provides an interface to manage chart dependencies and releases.
