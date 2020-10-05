@@ -4,7 +4,12 @@
   <p align="center">The GitOps workflow to manage Kubernetes application at any size (without server components).</p>
 </p>
 
-This guide describe a [GitOps](https://www.weave.works/technologies/gitops/) Kubernetes workflow without relying on server components. We provide a modern [Push based](https://www.weave.works/blog/why-is-a-pull-vs-a-push-pipeline-important) CI/CD workflow.
+# Preface
+
+This guide describe a CI/CD workflow for Kubernetes that enables [GitOps](https://www.weave.works/technologies/gitops/) without relying on server components.
+
+There are many tools to practice GitOps. ArgoCD and FluxCD are the successor of it. Both tools are great but comes with a high cost. You need to manage a complex piece of software (kubernetes operator) in your cluster and it couples you to very specific solutions (CRD's). In search of something simpler I found the `k14s` tools. Those are client tools to simplify the (templating, build, deploy) process without coupling to community solutions.
+
 
 ## Project structure
 ```
@@ -119,6 +124,8 @@ $ kapp deploy --yes -n default -a my-app -f ./.umbrella-state/state.yaml
 ```
 
 :warning: Make sure that you don't use helm for releases. This would be incompatible with the GitOps principles because we can't store it in git. You rollback your application by switching / cherry-pick to a specific commit in git.
+
+:warning: Kapp doesn't detect that your state is out-of-sync if you change your cluster with a differen tool than kapp.
 
 ### Clean up resources
 

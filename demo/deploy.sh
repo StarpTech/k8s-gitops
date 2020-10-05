@@ -1,2 +1,2 @@
 helm template my-app ./umbrella-chart | kbld -f - -f umbrella-chart/kbld-sources.yaml --lock-output .umbrella-state/kbld.lock.yml --registry-verify-certs=false > ./.umbrella-state/state.yaml
-kapp deploy --yes -n default -a my-app -f ./.umbrella-state/state.yaml
+kapp deploy -n default -a my-app -f ./.umbrella-state/state.yaml
