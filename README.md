@@ -10,8 +10,7 @@ This guide describe a [GitOps](https://www.weave.works/technologies/gitops/) Kub
 ```
 ├── umbrella-chart
 │   ├── charts
-│   │   ├── demo-service
-│   │   └── user-service
+│   │   └── demo-service
 │   ├── Chart.lock
 |   ├── values.yaml
 |   ├── kbld-sources.yaml
