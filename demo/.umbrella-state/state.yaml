@@ -74,7 +74,7 @@ metadata:
           Type: local
         - Dirty: true
           RemoteURL: git@github.com:StarpTech/helmsphere.git
-          SHA: 2949d0d511d0401312618b3e2e9c2421183b892a
+          SHA: bdf8177abb1bd2c4280c1e79eb3b2807da939130
           Type: git
         URL: index.docker.io/starptech/demo-service@sha256:da49a2ec3fca4e09bf581443e20215475c411b0d6c73c4f8707bdc48f3017e6d
   labels:
