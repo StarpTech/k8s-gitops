@@ -21,6 +21,12 @@ This guide describe a [GitOps](https://www.weave.works/technologies/gitops/) Kub
 |   └── state.yaml (snapshot of the release artifact)
 ```
 
+## Prerequisites
+
+- [helm](https://helm.sh/)
+- [kbld](https://github.com/k14s/kbld)
+- [kapp](https://github.com/k14s/kapp)
+
 ## Helm introduction
 
 [Helm](https://helm.sh/) is the package manager for Kubernetes. It provides an interface to manage chart dependencies.
