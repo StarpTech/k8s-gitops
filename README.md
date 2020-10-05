@@ -14,13 +14,14 @@ There are many tools to practice GitOps. ArgoCD and FluxCD are the successor of 
 - Two-way synchronization (docker registry, config-repository)
 - Out-of-sync detection
 
-The drawbacks are: You no longer work from the perspective of the application. You need to think in config-repositories / -branches. Those sources must be configured in your cluster. They also ship a CLI to solve more advanced usecases. Yes, in that case you still need a connection to your cluster.
+The drawbacks are: You no longer work from the perspective of the application. You need to think entirely in config-repositories. Those sources must be configured in your cluster. They also ship a CLI to solve more advanced usecases. Yes, in that case you still need a connection to your cluster.
 
 In search of something simpler I found the `k14s` tools. Those are client tools to simplify the (templating, build, deploy) process without coupling to community solutions. I found out that you can archive the same benefits with client tools. The demo in this repository solves:
 
-- [X] You declaratively describe the entire desired state of your system in git. This includes the apps, config, dashboards, monitoring and everything else.
-- [X] What can be described can be automated. Use YAMLs to enforce conformance of the system.
-- [X] You push code not containers. Everything is controlled through pull requests.
+- [X] The entire release can be described declaratively and stored in git.
+- [X] You can create branches to derivate your config and deploy them in your CI.
+- [X] You don't need to manage additional state on your cluster.
+- [X] You can easily reproduce the state on your local machine.
 
 > _Source: https://github.com/fluxcd/flux_
 
