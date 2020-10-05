@@ -1,0 +1,15 @@
+#! where to find demo-service source
+---
+apiVersion: kbld.k14s.io/v1alpha1
+kind: Sources
+sources:
+- image: demo-service
+  path: demo-service
+---
+#! where to push demo-service image
+---
+apiVersion: kbld.k14s.io/v1alpha1
+kind: ImageDestinations
+destinations:
+- image: demo-service
+  newImage: docker.io/starptech/demo-service

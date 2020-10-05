@@ -10,15 +10,15 @@ This guide describe a [GitOps](https://www.weave.works/technologies/gitops/) Kub
 ```
 ├── umbrella-chart
 │   ├── charts
-│   │   ├── order-service
+│   │   ├── demo-service
 │   │   └── user-service
 │   ├── Chart.lock
 |   ├── values.yaml
+|   ├── kbld-sources.yaml
 │   └── Chart.yaml
-├── umbrella-state
-│   ├── sources.yaml
+├── .umbrella-state
 │   ├── kbld.lock.yml
-|   ├── umbrella-chart (snapshot)
+|   └── state.yaml (snapshot of the release artifact)
 ```
 
 ## Helm introduction
@@ -59,42 +59,42 @@ If you practice CI you will test, build and deploy new images continuously in yo
 
 ### Define your application images
 
-You must create some sources and image destinations so that `kbld` is able to know which images belong to your application. For the sake of simplicity we put them in `umbrella-state/sources.yaml`.
+You must create some sources and image destinations so that `kbld` is able to know which images belong to your application. For the sake of simplicity we put them in `umbrella-chart/kbld-sources.yaml`.
 
 ```yaml
-#! where to find order-service source
+#! where to find demo-service source
 ---
 apiVersion: kbld.k14s.io/v1alpha1
 kind: Sources
 sources:
-- image: order-service
-  path: order-service
+- image: demo-service
+  path: demo-service
 ---
-#! where to push order-service image
+#! where to push demo-service image
 ---
 apiVersion: kbld.k14s.io/v1alpha1
 kind: ImageDestinations
 destinations:
-- image: order-service
-  newImage: docker.io/hk/order-service
+- image: demo-service
+  newImage: docker.io/hk/demo-service
 
 ```
 
 ### Release snapshot
 
-This command will prerender your umbrella chart to `umbrella-state/`, builds and push all necessary images and replace all references in your manifests. The result is a snapshot of your release. The `kbld.lock.yml` represents a lock file of all tagged images. This is useful to ensure that the exact same image is used for the deployment.
+This command will prerender your umbrella chart to `.umbrella-state/`, builds and push all necessary images and replace all references in your manifests. The result is a snapshot of your release. The `kbld.lock.yml` represents a lock file of all tagged images. This is useful to ensure that the exact same image is used for the deployment.
 
 ```sh
-$ helm template ./umbrella-chart --values my-vals.yml --verify --namespace production --create-namespace --validate --output-dir umbrella-state
-$ kbld -f umbrella-state/ --lock-output umbrella-state/kbld.lock.yml
+# template chart, build / push images to registry and replace images references with immutables tags
+$ helm template my-app ./umbrella-chart | kbld -f - -f umbrella-chart/kbld-sources.yaml --lock-output .umbrella-state/kbld.lock.yml --registry-verify-certs=false > ./.umbrella-state/state.yaml
 ```
 
 #### Update the state in git
 
-The artifact directory `umbrella-state/` must be commited to git. This means you can reproduce the state at any commit. `[ci skip]` is necessary to avoid retriggering your CI.
+The artifact directory `.umbrella-state/` must be commited to git. This means you can reproduce the state at any commit. `[ci skip]` is necessary to avoid retriggering your CI.
 
 ```sh
-git add umbrella-state/* && git commit -m "[ci skip] New Release"
+git add .umbrella-state/* && git commit -m "[ci skip] New Release"
 ```
 
 ### :heavy_check_mark: kbld / umbrella-state solves:
@@ -108,21 +108,22 @@ git add umbrella-state/* && git commit -m "[ci skip] New Release"
 
 We use [kapp](https://github.com/k14s/kapp) to deploy the manifests to the kubernetes cluster. `Kapp` ensures that all ressources are properly installed in the right order. It provides an enhanced interface to understand what has really changed in your cluster. If you want to learn more you should check the [homepage](https://get-kapp.io/).
 
-```
-$ kapp app-group deploy -g production-app --directory umbrella-state/ --yes
+```sh
+# deploy it on your cluster
+$ kapp deploy --yes -n default -a my-app -f ./.umbrella-state/state.yaml
 ```
 
-:warning: Make sure that you don't use helm for releases. This would be incompatible to the GitOps principles because we can't render that procedure to git. You rollback your application by switching / cherry-pick to a specific commit in git.
+:warning: Make sure that you don't use helm for releases. This would be incompatible with the GitOps principles because we can't store it in git. You rollback your application by switching / cherry-pick to a specific commit in git.
 
 ### Clean up resources
 
 If you need to delete your app. You only need to call:
 
 ```
-$ kapp delete -a production-app
+$ kapp delete -a my-app --yes
 ```
 
-> This comes handy, if you need to clean up resources when a PR is closed.
+> This comes handy, if you need to clean up resources on dynamic environments.
 
 ### :heavy_check_mark: kapp solves:
 
@@ -132,6 +133,10 @@ $ kapp delete -a production-app
 ## :checkered_flag: Result
 
 > Done! You have an automated CI/CD GitOps workflow to manage an microservice architecture at any size and **without** relying on server components like a kubernetes operator.
+
+## Demo
+
+Checkout the [demo](./demo) to see how it looks like.
 
 ## References
 

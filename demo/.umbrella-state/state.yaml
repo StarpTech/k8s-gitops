@@ -1,0 +1,231 @@
+---
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  labels:
+    app.kubernetes.io/instance: my-app
+    app.kubernetes.io/managed-by: Helm
+    app.kubernetes.io/name: umbrella-chart
+    app.kubernetes.io/version: 1.16.0
+    helm.sh/chart: umbrella-chart-0.1.0
+  name: my-app-umbrella-chart
+---
+apiVersion: v1
+data:
+  memcached-password: ""
+kind: Secret
+metadata:
+  labels:
+    app.kubernetes.io/instance: my-app
+    app.kubernetes.io/managed-by: Helm
+    app.kubernetes.io/name: memcached
+    helm.sh/chart: memcached-4.2.25
+  name: my-app-memcached
+type: Opaque
+---
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    app.kubernetes.io/instance: my-app
+    app.kubernetes.io/managed-by: Helm
+    app.kubernetes.io/name: memcached
+    helm.sh/chart: memcached-4.2.25
+  name: my-app-memcached
+spec:
+  ports:
+  - name: memcache
+    nodePort: null
+    port: 11211
+    targetPort: memcache
+  selector:
+    app.kubernetes.io/instance: my-app
+    app.kubernetes.io/name: memcached
+  type: ClusterIP
+---
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    app.kubernetes.io/instance: my-app
+    app.kubernetes.io/managed-by: Helm
+    app.kubernetes.io/name: umbrella-chart
+    app.kubernetes.io/version: 1.16.0
+    helm.sh/chart: umbrella-chart-0.1.0
+  name: my-app-umbrella-chart
+spec:
+  ports:
+  - name: http
+    port: 80
+    protocol: TCP
+    targetPort: http
+  selector:
+    app.kubernetes.io/instance: my-app
+    app.kubernetes.io/name: umbrella-chart
+  type: ClusterIP
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  annotations:
+    kbld.k14s.io/images: |
+      - Metas:
+        - Path: D:\repositories\starptech\helmsphere\demo\demo-service
+          Type: local
+        - Dirty: true
+          RemoteURL: git@github.com:StarpTech/helmsphere.git
+          SHA: 2949d0d511d0401312618b3e2e9c2421183b892a
+          Type: git
+        URL: index.docker.io/starptech/demo-service@sha256:da49a2ec3fca4e09bf581443e20215475c411b0d6c73c4f8707bdc48f3017e6d
+  labels:
+    app.kubernetes.io/instance: my-app
+    app.kubernetes.io/managed-by: Helm
+    app.kubernetes.io/name: demo-service
+    app.kubernetes.io/version: 1.16.0
+    helm.sh/chart: demo-service-0.1.0
+  name: my-app-demo-service
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app.kubernetes.io/instance: my-app
+      app.kubernetes.io/name: demo-service
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/instance: my-app
+        app.kubernetes.io/name: demo-service
+    spec:
+      containers:
+      - image: index.docker.io/starptech/demo-service@sha256:da49a2ec3fca4e09bf581443e20215475c411b0d6c73c4f8707bdc48f3017e6d
+        imagePullPolicy: IfNotPresent
+        name: demo-service
+        securityContext: {}
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  annotations:
+    kbld.k14s.io/images: |
+      - Metas:
+        - Tag: 1.6.7-debian-10-r12
+          Type: resolved
+          URL: docker.io/bitnami/memcached:1.6.7-debian-10-r12
+        URL: index.docker.io/bitnami/memcached@sha256:ca7aa82e07bdb5d6be600e3381a0a144de26e13c679b01d08b83c7672d49ccf3
+  labels:
+    app.kubernetes.io/instance: my-app
+    app.kubernetes.io/managed-by: Helm
+    app.kubernetes.io/name: memcached
+    helm.sh/chart: memcached-4.2.25
+  name: my-app-memcached
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app.kubernetes.io/instance: my-app
+      app.kubernetes.io/name: memcached
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/instance: my-app
+        app.kubernetes.io/managed-by: Helm
+        app.kubernetes.io/name: memcached
+        helm.sh/chart: memcached-4.2.25
+    spec:
+      containers:
+      - args:
+        - /run.sh
+        env:
+        - name: BITNAMI_DEBUG
+          value: "false"
+        - name: MEMCACHED_USERNAME
+          value: ""
+        - name: MEMCACHED_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              key: memcached-password
+              name: my-app-memcached
+        image: index.docker.io/bitnami/memcached@sha256:ca7aa82e07bdb5d6be600e3381a0a144de26e13c679b01d08b83c7672d49ccf3
+        imagePullPolicy: IfNotPresent
+        livenessProbe:
+          failureThreshold: 6
+          initialDelaySeconds: 30
+          tcpSocket:
+            port: memcache
+          timeoutSeconds: 5
+        name: memcached
+        ports:
+        - containerPort: 11211
+          name: memcache
+        readinessProbe:
+          initialDelaySeconds: 5
+          periodSeconds: 5
+          tcpSocket:
+            port: memcache
+          timeoutSeconds: 3
+        resources:
+          limits: {}
+          requests:
+            cpu: 250m
+            memory: 256Mi
+        securityContext:
+          readOnlyRootFilesystem: false
+        volumeMounts:
+        - mountPath: /tmp
+          name: tmp
+      securityContext:
+        fsGroup: 1001
+        runAsUser: 1001
+      volumes:
+      - emptyDir: {}
+        name: tmp
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  annotations:
+    kbld.k14s.io/images: |
+      - Metas:
+        - Tag: 1.16.0
+          Type: resolved
+          URL: nginx:1.16.0
+        URL: index.docker.io/library/nginx@sha256:3e373fd5b8d41baeddc24be311c5c6929425c04cabf893b874ac09b72a798010
+  labels:
+    app.kubernetes.io/instance: my-app
+    app.kubernetes.io/managed-by: Helm
+    app.kubernetes.io/name: umbrella-chart
+    app.kubernetes.io/version: 1.16.0
+    helm.sh/chart: umbrella-chart-0.1.0
+  name: my-app-umbrella-chart
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app.kubernetes.io/instance: my-app
+      app.kubernetes.io/name: umbrella-chart
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/instance: my-app
+        app.kubernetes.io/name: umbrella-chart
+    spec:
+      containers:
+      - image: index.docker.io/library/nginx@sha256:3e373fd5b8d41baeddc24be311c5c6929425c04cabf893b874ac09b72a798010
+        imagePullPolicy: IfNotPresent
+        livenessProbe:
+          httpGet:
+            path: /
+            port: http
+        name: umbrella-chart
+        ports:
+        - containerPort: 80
+          name: http
+          protocol: TCP
+        readinessProbe:
+          httpGet:
+            path: /
+            port: http
+        resources: {}
+        securityContext: {}
+      securityContext: {}
+      serviceAccountName: my-app-umbrella-chart

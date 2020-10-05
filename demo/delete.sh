@@ -1,0 +1,1 @@
+kapp delete -a my-app

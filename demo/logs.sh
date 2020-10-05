@@ -1,0 +1,1 @@
+kapp logs -f -a my-app

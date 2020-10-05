@@ -1,0 +1,13 @@
+apiVersion: kbld.k14s.io/v1alpha1
+kind: Config
+minimumRequiredVersion: 0.25.0
+overrides:
+- image: demo-service
+  newImage: index.docker.io/starptech/demo-service@sha256:da49a2ec3fca4e09bf581443e20215475c411b0d6c73c4f8707bdc48f3017e6d
+  preresolved: true
+- image: docker.io/bitnami/memcached:1.6.7-debian-10-r12
+  newImage: index.docker.io/bitnami/memcached@sha256:ca7aa82e07bdb5d6be600e3381a0a144de26e13c679b01d08b83c7672d49ccf3
+  preresolved: true
+- image: nginx:1.16.0
+  newImage: index.docker.io/library/nginx@sha256:3e373fd5b8d41baeddc24be311c5c6929425c04cabf893b874ac09b72a798010
+  preresolved: true

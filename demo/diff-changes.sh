@@ -1,0 +1,1 @@
+kapp deploy --yes -n default -a my-app -f ./.umbrella-state/state.yaml --diff-changes
