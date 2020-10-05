@@ -4,7 +4,7 @@
   <p align="center">The GitOps workflow to manage Kubernetes application at any size (without server components).</p>
 </p>
 
-This guide describe a [GitOps](https://www.weave.works/technologies/gitops/) Kubernetes workflow without relying on server components. We provide a modern [Push based](https://www.weave.works/blog/why-is-a-pull-vs-a-push-pipeline-important) CI/CD workflow.
+This guide describe a [GitOps](https://www.weave.works/technologies/gitops/) Kubernetes workflow without relying on server components. I provide a modern [Push based](https://www.weave.works/blog/why-is-a-pull-vs-a-push-pipeline-important) CI/CD workflow.
 
 ## Project structure
 ```
@@ -22,7 +22,7 @@ This guide describe a [GitOps](https://www.weave.works/technologies/gitops/) Kub
 
 ## Helm introduction
 
-[Helm](https://helm.sh/) is the package manager for Kubernetes. It provides an interface to manage chart dependencies and releases.
+[Helm](https://helm.sh/) is the package manager for Kubernetes. It provides an interface to manage chart dependencies.
 
 ### Dependency Management
 
@@ -30,24 +30,21 @@ This guide describe a [GitOps](https://www.weave.works/technologies/gitops/) Kub
 - `helm dependency list` - List the dependencies for the given chart
 - `helm dependency update` - Update charts/ based on the contents of Chart.yaml
 
-### Release Management
+Helm allows you to manage a project composed of multiple microservices with a top-level [`umbrella-chart`](https://helm.sh/docs/howto/charts_tips_and_tricks/#complex-charts-with-many-dependencies). You can define [global](https://helm.sh/docs/chart_template_guide/subcharts_and_globals/#global-chart-values) chart values which are accessible in all sub-charts. 
 
-- `helm install` - Install a chart
-- `helm uninstall` - Uninstall a release
-- `helm upgrade` - Upgrade a release
-- `helm rollback` - Roll back a release to a previous revision
-
-You are able to manage a project composed of multiple microservices with a top-level [`umbrella-chart`](https://helm.sh/docs/howto/charts_tips_and_tricks/#complex-charts-with-many-dependencies). You can [override](https://helm.sh/docs/chart_template_guide/subcharts_and_globals/#global-chart-values) sub-chart values in your `values.yaml` of the `umbrella-chart`.
+In big teams sharing charts can be an exhauasting tasks. In that situation you should think about to host your own Chart Repoitory. You can use [`chartmuseum`](https://github.com/helm/chartmuseum). The simpler solution is to host your charts on S3 and use the helm plugin [`S3`](https://github.com/hypnoglow/helm-s3) to make them accessible in the cli.
 
 ### :heavy_check_mark: Helm solves:
 
-- [X] Compose multiple configurations.
-- [X] Manage upgrades, rollbacks.
+- [X] Compose multiple application into a bigger one.
+- [X] Manage upgrades, rollbacks and dependencies.
 - [X] Distribute configurations.
 
 ## The umbrella-state
 
-Helm guaranteed reproducable builds if you are working with the same helm values. Because all files are checked into git we can reproduce the helm release at any commit. The `umbrella-state` refers to the single-source-of truth of an helm release. The umbrella-state is updated automatically in the CI pipeline.
+Helm guaranteed reproducable builds if you are working with the same helm values. Because all files are checked into git we can reproduce the helm release at any commit.
+
+The `umbrella-state` refers to the single-source-of truth of an helm release at a particular time.
 
 ### :heavy_check_mark: The umbrella-state solves:
 
@@ -56,12 +53,13 @@ Helm guaranteed reproducable builds if you are working with the same helm values
 
 ## Build, Test and Push your images
 
-If you practice CI you will test, build and deploy new images continuously in your CI. The image tag must be replaced in your helm manifests. In order to automate and standardize this process we use [kbld](https://github.com/k14s/kbld). `kbld` handles the workflow for building, pushing images. It integrates with helm, kustomize really well.
+If you practice CI you will test, build and deploy new images continuously in your CI. The image tag must be replaced in your helm manifests. In order to automate and standardize this process I use [kbld](https://github.com/k14s/kbld). `kbld` handles the workflow for building, pushing images. It integrates with helm, kustomize really well.
 
 
 ### Define your application images
 
-You must create some sources and image destinations in `umbrella-state/sources.yaml` so that `kbld` is able to know which images belong to your application.
+You must create some sources and image destinations so that `kbld` is able to know which images belong to your application. For the sake of simplicity I put them in `umbrella-state/sources.yaml`.
+
 ```yaml
 #! where to find order-service source
 ---
@@ -83,14 +81,20 @@ destinations:
 
 ### Release snapshot
 
-This command will prerender your umbrella chart to `umbrella-state/`, builds / push all necessary images and replace all references in your manifests. The result is a complete static snapshot of your release. The `kbld.lock.yml` represents a lock file of all tagged images. This is useful to ensure that the exact same image is used for the deployment.
+This command will prerender your umbrella chart to `umbrella-state/`, builds and push all necessary images and replace all references in your manifests. The result is a snapshot of your release. The `kbld.lock.yml` represents a lock file of all tagged images. This is useful to ensure that the exact same image is used for the deployment.
 
 ```sh
-$ helm template ./umbrella-chart --values my-vals.yml --verify --namespace production --create-namespace --output-dir umbrella-state
+$ helm template ./umbrella-chart --values my-vals.yml --verify --namespace production --create-namespace --validate --output-dir umbrella-state
 $ kbld -f umbrella-state/ --lock-output umbrella-state/kbld.lock.yml
 ```
 
-The artifact directory `umbrella-state/` must be commited to git. This means we can reproduce the state at any commit.
+The artifact directory `umbrella-state/` must be commited to git. This means I can reproduce the state at any commit.
+
+```sh
+git add umbrella-state/* && git commit -m "[ci skip] New Release"
+```
+
+> [ci skip] is necessary to avoid retriggering your CI.
 
 ### :heavy_check_mark: kbld / umbrella-state solves:
 
@@ -101,11 +105,23 @@ The artifact directory `umbrella-state/` must be commited to git. This means we 
 
 ## Deployment
 
-We use [kapp](https://github.com/k14s/kapp) to deploy the manifests to the kubernetes cluster. `Kapp` ensures that all ressources are properly installed.
+I use [kapp](https://github.com/k14s/kapp) to deploy the manifests to the kubernetes cluster. `Kapp` ensures that all ressources are properly installed in the right order. It provides an enhanced interface to understand what has really changed in your cluster. If you want to learn more you should check the [homepage](https://get-kapp.io/).
 
 ```
-$ kapp app-group deploy -g production --directory umbrella-state/
+$ kapp app-group deploy -g production-app --directory umbrella-state/ --yes
 ```
+
+:warning: Make sure that you don't use helm for releases. This would be incompatible to the GitOps principles because we can't render that procedure to git. You rollback your application by switching / cherry-pick to a specific commit in git.
+
+### Clean up resources
+
+If you need to delete your app. You only need to call:
+
+```
+$ kapp delete -a production-app
+```
+
+> This comes handy, if you need to clean up resources when a PR is closed.
 
 ### :heavy_check_mark: kapp solves:
 
