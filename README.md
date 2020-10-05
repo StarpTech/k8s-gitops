@@ -140,7 +140,7 @@ $ kapp deploy --yes -n default -a my-app -f ./.umbrella-state/state.yaml
 
 :warning: Make sure that you don't use helm for releases. This would be incompatible with the GitOps principles because we can't store it in git. You rollback your application by switching / cherry-pick to a specific commit in git.
 
-:warning: Kapp doesn't detect that your state is out-of-sync if you change your cluster with a differen tool than kapp.
+:warning: Kapp doesn't detect that your state is out-of-sync if you change your cluster with a different tool than kapp.
 
 ### Clean up resources
 
