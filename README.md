@@ -37,7 +37,7 @@ In big teams sharing charts can be an exhauasting tasks. In that situation you s
 ### :heavy_check_mark: Helm solves:
 
 - [X] Compose multiple application into a bigger one.
-- [X] Manage upgrades, rollbacks and dependencies.
+- [X] Manage dependencies.
 - [X] Distribute configurations.
 
 ## The umbrella-state
