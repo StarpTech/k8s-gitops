@@ -43,6 +43,7 @@ According to [Managing Helm releases the GitOps way](https://github.com/fluxcd/h
 - [helm](https://helm.sh/)
 - [kbld](https://github.com/k14s/kbld)
 - [kapp](https://github.com/k14s/kapp)
+- [sops](https://github.com/mozilla/sops/) (optional)
 
 ## Helm introduction
 
@@ -155,13 +156,26 @@ $ kapp delete -a my-app --yes
 - [X] One way to diffing, labeling, deployment and deletion
 - [X] Agnostic to how manifests are generated.
 
-## Environment management
+## Environment Management
 
 Here are some ideas how you can deal with multiple environments:
 
 - Monorepo: Put your infrastucture code along your code. You can create different branches for different environments.
 - Multiple repositories: Create a config-repository which reflect the state of your environment. In that case you don't need to retrigger your CI for config changes and there is no "leading" application repository.
 - Preview deployments: Manage a local umbrella-chart which describes the environment of your preview-deployment. You could also create a config-repository for preview-deployments.
+
+## Secret Management
+
+You can use [sops](https://github.com/mozilla/sops/) to encrypt yaml files. The files are encrypted before they are distributed in helm charts.
+In the deployment process you can decrypt them with a single command. Sops support several KMS services (Hashicorp Vault, AWS Secrets Manager, etc).
+
+```sh
+# As a chart maintainer I can encrypt my secrets with:
+find ./temp-release -name "*secret*" -exec sops -e -i {} \;
+
+# Before deployment I will decrypt my secrets to kubernetes can read them.
+kapp deploy -n default -a my-app -f <(sops -d ./.umbrella-state/state.yaml)
+```
 
 ## :checkered_flag: Result
 
