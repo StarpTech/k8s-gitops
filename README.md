@@ -154,6 +154,14 @@ $ kapp delete -a my-app --yes
 - [X] One way to diffing, labeling, deployment and deletion
 - [X] Agnostic to how manifests are generated.
 
+## Environment management
+
+Here are some ideas how you can deal with multiple environments:
+
+- Monorepo: Put your infrastucture code along your code. You can create different branches for different environments.
+- Multiple repositories: Create a config-repository which reflect the state of your environment. In that case you don't need to retrigger your CI for config changes and there is no "leading" application repository.
+- Preview deployments: Manage a local umbrella-chart which describes the environment of your preview-deployment. You could also create a config-repository for preview-deplyoments.
+
 ## :checkered_flag: Result
 
 > Done! You have an automated CI/CD GitOps workflow to manage an microservice architecture at any size and **without** relying on server components like a kubernetes operator.
