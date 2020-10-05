@@ -137,9 +137,11 @@ We use [kapp](https://github.com/k14s/kapp) to deploy the manifests to the kuber
 $ kapp deploy --yes -n default -a my-app -f ./.umbrella-state/state.yaml
 ```
 
-:warning: Make sure that you don't use helm for releases. This would be incompatible with the GitOps principles because we can't store it in git. You rollback your application by switching / cherry-pick to a specific commit in git.
+> :warning: Make sure that you don't use helm for releases. This would be incompatible with the GitOps principles because we can't store it in git. You rollback your application by switching / cherry-pick to a specific commit in git.
 
-:warning: Kapp doesn't detect that your state is out-of-sync if you change your cluster with a different tool than kapp.
+> :information_source: Kapp takes user provided config as the only source of truth, but also allows to explicitly specify that certain fields are cluster controlled. This method guarantees that clusters don't drift, which is better than what basic 3 way merge provides.
+<br>
+Source: https://github.com/k14s/kapp/issues/58#issuecomment-559214883
 
 ### Clean up resources
 
