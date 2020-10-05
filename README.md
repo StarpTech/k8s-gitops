@@ -165,6 +165,10 @@ $ kapp delete -a my-app --yes
 
 Checkout the [demo](./demo) to see how it looks like.
 
+## More
+
+- [Combine helm with kustomize](https://github.com/thomastaylor312/advanced-helm-demos/tree/master/post-render)
+
 ## References
 
 - [k14s-kubernetes-tools](https://tanzu.vmware.com/content/blog/introducing-k14s-kubernetes-tools-simple-and-composable-tools-for-application-deployment)
