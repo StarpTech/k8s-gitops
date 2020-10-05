@@ -166,7 +166,7 @@ Here are some ideas how you can deal with multiple environments:
 
 ## Secret Management
 
-You can use [sops](https://github.com/mozilla/sops/) to encrypt yaml files. The files are encrypted before they are distributed in helm charts.
+You can use [sops](https://github.com/mozilla/sops/) to encrypt yaml files. The files must be encrypted before they are distributed in helm charts.
 In the deployment process you can decrypt them with a single command. Sops support several KMS services (Hashicorp Vault, AWS Secrets Manager, etc).
 
 ```sh
