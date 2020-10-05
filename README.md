@@ -23,8 +23,6 @@ In search of something simpler I found the `k14s` tools. Those are client tools 
 - [X] You don't need to manage additional state on your cluster.
 - [X] You can easily reproduce the state on your local machine.
 
-> _Source: https://github.com/fluxcd/flux_
-
 According to [Managing Helm releases the GitOps way](https://github.com/fluxcd/helm-operator-get-started) you need three things to apply the GitOps pipeline model. I think we can refute the last point.
 
 ## Project structure
