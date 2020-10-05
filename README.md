@@ -17,7 +17,8 @@ This guide describe a [GitOps](https://www.weave.works/technologies/gitops/) Kub
 │   └── Chart.yaml
 ├── umbrella-state
 │   ├── sources.yaml
-|   ├── generated manifests...
+│   ├── kbld.lock.yml
+|   ├── umbrella-chart (snapshot)
 ```
 
 ## Helm introduction
@@ -87,6 +88,8 @@ This command will prerender your umbrella chart to `umbrella-state/`, builds and
 $ helm template ./umbrella-chart --values my-vals.yml --verify --namespace production --create-namespace --validate --output-dir umbrella-state
 $ kbld -f umbrella-state/ --lock-output umbrella-state/kbld.lock.yml
 ```
+
+#### Update the state in git
 
 The artifact directory `umbrella-state/` must be commited to git. This means you can reproduce the state at any commit. `[ci skip]` is necessary to avoid retriggering your CI.
 
