@@ -43,6 +43,7 @@ According to [Managing Helm releases the GitOps way](https://github.com/fluxcd/h
 - [helm](https://helm.sh/)
 - [kbld](https://github.com/k14s/kbld)
 - [kapp](https://github.com/k14s/kapp)
+- [kubeval](https://github.com/instrumenta/kubeval)
 - [sops](https://github.com/mozilla/sops/) (optional)
 
 ## Helm introduction
@@ -173,7 +174,7 @@ In the deployment process you can decrypt them with a single command. Sops suppo
 # As a chart maintainer I can encrypt my secrets with:
 find ./temp-release -name "*secret*" -exec sops -e -i {} \;
 
-# Before deployment I will decrypt my secrets to kubernetes can read them.
+# Before deployment I will decrypt my secrets so kubernetes can read them.
 kapp deploy -n default -a my-app -f <(sops -d ./.umbrella-state/state.yaml)
 ```
 
