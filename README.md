@@ -8,8 +8,23 @@
 
 This guide describe a CI/CD workflow for Kubernetes that enables [GitOps](https://www.weave.works/technologies/gitops/) without relying on server components.
 
-There are many tools to practice GitOps. ArgoCD and FluxCD are the successor of it. Both tools are great but comes with a high cost. You need to manage a complex piece of software (kubernetes operator) in your cluster and it couples you to very specific solutions (CRD's). In search of something simpler I found the `k14s` tools. Those are client tools to simplify the (templating, build, deploy) process without coupling to community solutions.
+There are many tools to practice GitOps. ArgoCD and FluxCD are the successor of it. Both tools are great but comes with a high cost. You need to manage a complex piece of software (kubernetes operator) in your cluster and it couples you to very specific solutions (CRD's). Additionally, they enfore a [Pull](https://www.weave.works/blog/why-is-a-pull-vs-a-push-pipeline-important) based CD workflow. I can't get used to practice this flow because it feels artificial although I'm aware of the benefits:
 
+- Automated updates of images without a connection to you cluster.
+- Two-way synchronization (docker registry, config-repository)
+- Out-of-sync detection
+
+The drawbacks are: You no longer work from the perspective of the application. You need to think in config-repositories / -branches. Those sources must be configured in your cluster. They also ship a CLI to solve more advanced usecases. Yes, in that case you still need a connection to your cluster.
+
+In search of something simpler I found the `k14s` tools. Those are client tools to simplify the (templating, build, deploy) process without coupling to community solutions. I found out that you can archive the same benefits with client tools. The demo in this repository solves:
+
+- [X] You declaratively describe the entire desired state of your system in git. This includes the apps, config, dashboards, monitoring and everything else.
+- [X] What can be described can be automated. Use YAMLs to enforce conformance of the system.
+- [X] You push code not containers. Everything is controlled through pull requests.
+
+> _Source: https://github.com/fluxcd/flux_
+
+According to [Managing Helm releases the GitOps way](https://github.com/fluxcd/helm-operator-get-started) you need three things to apply the GitOps pipeline model. I think we can refute the last point.
 
 ## Project structure
 ```
