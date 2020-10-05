@@ -4,7 +4,7 @@
   <p align="center">The GitOps workflow to manage Kubernetes application at any size (without server components).</p>
 </p>
 
-This guide describe a [GitOps](https://www.weave.works/technologies/gitops/) Kubernetes workflow without relying on server components. I provide a modern [Push based](https://www.weave.works/blog/why-is-a-pull-vs-a-push-pipeline-important) CI/CD workflow.
+This guide describe a [GitOps](https://www.weave.works/technologies/gitops/) Kubernetes workflow without relying on server components. We provide a modern [Push based](https://www.weave.works/blog/why-is-a-pull-vs-a-push-pipeline-important) CI/CD workflow.
 
 ## Project structure
 ```
@@ -53,12 +53,12 @@ The `umbrella-state` refers to the single-source-of truth of an helm release at 
 
 ## Build, Test and Push your images
 
-If you practice CI you will test, build and deploy new images continuously in your CI. The image tag must be replaced in your helm manifests. In order to automate and standardize this process I use [kbld](https://github.com/k14s/kbld). `kbld` handles the workflow for building, pushing images. It integrates with helm, kustomize really well.
+If you practice CI you will test, build and deploy new images continuously in your CI. The image tag must be replaced in your helm manifests. In order to automate and standardize this process we use [kbld](https://github.com/k14s/kbld). `kbld` handles the workflow for building, pushing images. It integrates with helm, kustomize really well.
 
 
 ### Define your application images
 
-You must create some sources and image destinations so that `kbld` is able to know which images belong to your application. For the sake of simplicity I put them in `umbrella-state/sources.yaml`.
+You must create some sources and image destinations so that `kbld` is able to know which images belong to your application. For the sake of simplicity we put them in `umbrella-state/sources.yaml`.
 
 ```yaml
 #! where to find order-service source
@@ -88,13 +88,11 @@ $ helm template ./umbrella-chart --values my-vals.yml --verify --namespace produ
 $ kbld -f umbrella-state/ --lock-output umbrella-state/kbld.lock.yml
 ```
 
-The artifact directory `umbrella-state/` must be commited to git. This means I can reproduce the state at any commit.
+The artifact directory `umbrella-state/` must be commited to git. This means you can reproduce the state at any commit. `[ci skip]` is necessary to avoid retriggering your CI.
 
 ```sh
 git add umbrella-state/* && git commit -m "[ci skip] New Release"
 ```
-
-> [ci skip] is necessary to avoid retriggering your CI.
 
 ### :heavy_check_mark: kbld / umbrella-state solves:
 
@@ -105,7 +103,7 @@ git add umbrella-state/* && git commit -m "[ci skip] New Release"
 
 ## Deployment
 
-I use [kapp](https://github.com/k14s/kapp) to deploy the manifests to the kubernetes cluster. `Kapp` ensures that all ressources are properly installed in the right order. It provides an enhanced interface to understand what has really changed in your cluster. If you want to learn more you should check the [homepage](https://get-kapp.io/).
+We use [kapp](https://github.com/k14s/kapp) to deploy the manifests to the kubernetes cluster. `Kapp` ensures that all ressources are properly installed in the right order. It provides an enhanced interface to understand what has really changed in your cluster. If you want to learn more you should check the [homepage](https://get-kapp.io/).
 
 ```
 $ kapp app-group deploy -g production-app --directory umbrella-state/ --yes
