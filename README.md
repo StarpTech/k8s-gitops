@@ -64,7 +64,7 @@ Helm allows you to manage a project composed of multiple microservices with a to
 
 In big teams sharing charts can be an exhauasting tasks. In that situation you should think about a solution to host your own Chart Repository. You can use [`chartmuseum`](https://github.com/helm/chartmuseum). The simpler approach is to host your charts on S3 and use the helm plugin [`S3`](https://github.com/hypnoglow/helm-s3) to make them managable with the helm cli.
 
-There is another very interesting approach to share charts or configurations in general. Google has developed a tool called `kpt`. One of the features is to sync arbitrary files / subdirectories from a git repository. You can even merge upstream updates. This make it very easy to share files across teams without working in multiple repositories at the same time.
+There is another very interesting approach to share charts or configurations in general. Google has developed a tool called [`kpt`](https://googlecontainertools.github.io/kpt/). One of the features is to sync arbitrary files / subdirectories from a git repository. You can even merge upstream updates. This make it very easy to share files across teams without working in multiple repositories at the same time.
 
 ```sh
 # fetch ./staging subdirectory
