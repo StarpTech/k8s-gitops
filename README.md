@@ -134,7 +134,7 @@ $ helm template my-app ./umbrella-chart | kbld -f - -f umbrella-chart/kbld-sourc
 
 #### Update the state in git
 
-The artifact directory `.umbrella-state/` must be commited to git. This means you can reproduce the state at any commit. `[ci skip]` is necessary to avoid retriggering your CI.
+The artifact directory `.umbrella-state/` must be commited to git. This means you can reproduce the state at any commit by trigger you CI pipeline. `[ci skip]` is necessary to avoid retriggering your CI if you update it in the pipeline.
 
 ```sh
 git add .umbrella-state/* && git commit -m "[ci skip] New Release"
