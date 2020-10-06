@@ -18,7 +18,7 @@ In search of something simpler I found the `k14s` tools. They are designed to be
 
 - [X] The entire release can be described declaratively and stored in git.
 - [X] You can create branches to derive your config and deploy them in your CI.
-- [X] You don't need to manage additional state on your cluster.
+- [X] You don't need to run additional software on your cluster.
 - [X] You can easily reproduce the state on your local machine.
 - [X] The CI/CD lifecycle is sequential. ([Push](https://www.weave.works/blog/why-is-a-pull-vs-a-push-pipeline-important) based pipeline)
 
@@ -80,7 +80,7 @@ kpt pkg update my-cockroachdb@gNEW_VERSION --strategy=resource-merge
 
 ### :heavy_check_mark: Helm solves:
 
-- [X] Compose multiple application into a bigger one.
+- [X] Build an application composed of multiple components.
 - [X] Manage dependencies.
 - [X] Distribute configurations.
 
@@ -88,7 +88,7 @@ kpt pkg update my-cockroachdb@gNEW_VERSION --strategy=resource-merge
 
 Helm guaranteed reproducable builds if you are working with the same helm values. Because all files are checked into git we can reproduce the helm templates at any commit.
 
-The `umbrella-state` refers to the single-source-of truth of the helm result at a particular commit.
+The `umbrella-state` refers to the single-source-of truth of the desired state of your cluster at a particular commit.
 
 ### :heavy_check_mark: The umbrella-state solves:
 
