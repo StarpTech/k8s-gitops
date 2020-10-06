@@ -125,7 +125,7 @@ destinations:
 
 ### Release snapshot
 
-This command will prerender your umbrella chart to `.umbrella-state/state.yaml`, builds and push all necessary images and replace all references in your manifests. The result is a snapshot of your release. The `kbld.lock.yml` represents a lock file of all tagged images. This is useful to ensure that the exact same image is used for the deployment.
+This command will prerender your umbrella chart to `.umbrella-state/state.yaml`, builds and push all necessary images and replace all references in your manifests. The result is a snapshot of your release. The `kbld.lock.yml` represents a lock file of all tagged images. This is useful to ensure that the exact same images are used on subsequent deployments.
 
 ```sh
 # template chart, build / push images to registry and replace images references with immutables tags
