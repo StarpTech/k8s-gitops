@@ -198,7 +198,8 @@ kapp deploy -n default -a my-app -f <(sops -d ./.umbrella-state/state.yaml)
 
 ## Closing words
 
-:checkered_flag:! You have an automated CI/CD GitOps workflow to manage an microservice architecture at any scale and **without** relying on server components like a kubernetes operator.
+:checkered_flag:! You have an automated CI/CD GitOps workflow to manage an microservice architecture at any scale. We don't rely on server components like a kubernetes operator.
+Many pieces can be replaced by other tools.
 
 The proposed solution is highly opinionated and I appreciate any feedback. Feel free to open an issue.
 
