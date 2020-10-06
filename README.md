@@ -80,9 +80,9 @@ kpt pkg update my-cockroachdb@gNEW_VERSION --strategy=resource-merge
 
 ### Advanced templating
 
-Sometimes it is necessary to patch a specific resource. This can have several reasons:
+Sometimes helm is not enough. This can have several reasons:
 
-- The external chart doesn't provide enough flexibility.
+- The external chart isn't flexible enough.
 - You want to keep base charts simple.
 - You want to abstract environments.
 
