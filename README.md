@@ -195,9 +195,11 @@ find ./temp-release -name "*secret*" -exec sops -e -i {} \;
 kapp deploy -n default -a my-app -f <(sops -d ./.umbrella-state/state.yaml)
 ```
 
-## :checkered_flag: Result
+## Closing words
 
-> Done! You have an automated CI/CD GitOps workflow to manage an microservice architecture at any size and **without** relying on server components like a kubernetes operator.
+:checkered_flag:! You have an automated CI/CD GitOps workflow to manage an microservice architecture at any scale and **without** relying on server components like a kubernetes operator.
+
+The proposed solution is highly opinionated and I appreciate any feedback. Feel free to open an issue.
 
 ## Demo
 
