@@ -70,8 +70,9 @@ There is another very interesting approach to share charts or configurations in 
 # fetch ./staging subdirectory
 kpt pkg get https://github.com/starptech/examples/staging@VERSION \
   my-staging
+
 # just for demo purpose
-kubectl apply -R -f my-cockroachdb
+kubectl apply -R -f my-staging
 
 # make changes, merge changes and tag that version in the remote repository
 kpt pkg update my-cockroachdb@gNEW_VERSION --strategy=resource-merge
