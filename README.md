@@ -87,7 +87,7 @@ kpt pkg update my-cockroachdb@gNEW_VERSION --strategy=resource-merge
 
 Helm guaranteed reproducable builds if you are working with the same helm values. Because all files are checked into git we can reproduce the helm release at any commit.
 
-The `umbrella-state` refers to the single-source-of truth of an helm release at a particular time.
+The `umbrella-state` refers to the single-source-of truth of an helm release at a particular commit.
 
 ### :heavy_check_mark: The umbrella-state solves:
 
@@ -96,12 +96,12 @@ The `umbrella-state` refers to the single-source-of truth of an helm release at 
 
 ## Build, Test and Push your images
 
-If you practice CI you will test, build and deploy new images continuously in your CI. The image tag must be replaced in your helm manifests. In order to automate and standardize this process we use [kbld](https://github.com/k14s/kbld). `kbld` handles the workflow for building, pushing images. It integrates with helm, kustomize really well.
+If you practice CI you will test, build and deploy new images continuously in your CI. The image tag must be replaced in your helm manifests. In order to automate and standardize this process we use [kbld](https://github.com/k14s/kbld). `kbld` handles the workflow for building and pushing images. It integrates with helm, kustomize really well because it doesn't care how manifests are generated.
 
 
 ### Define your application images
 
-You must create some sources and image destinations so that `kbld` is able to know which images belong to your application. For the sake of simplicity we put them in `umbrella-chart/kbld-sources.yaml`.
+before we can build images we must create some sources and image destinations so that `kbld` is able to know which images belong to your application. For the sake of simplicity we put them in `umbrella-chart/kbld-sources.yaml`. They look like `CRD's` but aren't applied to your cluster.
 
 ```yaml
 #! where to find demo-service source
