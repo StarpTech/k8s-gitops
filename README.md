@@ -88,7 +88,7 @@ kpt pkg update my-cockroachdb@gNEW_VERSION --strategy=resource-merge
 
 Helm guaranteed reproducable builds if you are working with the same helm values. Because all files are checked into git we can reproduce the helm templates at any commit.
 
-The `umbrella-state` refers to the single-source-of truth of an helm release at a particular commit.
+The `umbrella-state` refers to the single-source-of truth of the helm result at a particular commit.
 
 ### :heavy_check_mark: The umbrella-state solves:
 
