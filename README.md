@@ -78,6 +78,27 @@ kubectl apply -R -f my-staging
 kpt pkg update my-cockroachdb@gNEW_VERSION --strategy=resource-merge
 ```
 
+### Chart patching
+
+Sometimes it is necessary to patch a specific resource. This can have several reasons:
+
+- The external chart doesn't provide enough flexibility.
+- You want to keep base charts simple.
+- You want to abstract environments.
+
+In that case you can use tools like [kustomize](https://github.com/kubernetes-sigs/kustomize) or [ytt](https://github.com/k14s/ytt).
+
+```sh
+# this approach allows you to patch specific files because file stucture is preserved
+helm template my-app ./umbrella-chart --output-dir ./temp-release
+# this requires a local kustomize.yaml
+kustomize build ./temp-release
+
+# or with ytt, this will template all files and update the original files
+helm template my-app ./umbrella-chart --output-dir ./temp-release
+ytt -f ./temp-release --ignore-unknown-comments --output-files ./temp-release
+```
+
 ### :heavy_check_mark: Helm solves:
 
 - [X] Build an application composed of multiple components.
