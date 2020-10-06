@@ -97,12 +97,12 @@ The `umbrella-state` refers to the single-source-of truth of the helm result at 
 
 ## Build, Test and Push your images
 
-If you practice CI you will test, build and deploy new images continuously in your CI. The image tag must be replaced in your helm manifests. In order to automate and standardize this process we use [kbld](https://github.com/k14s/kbld). `kbld` handles the workflow for building and pushing images. It integrates with helm, kustomize really well because it doesn't care how manifests are generated.
+If you practice CI you will test, build and deploy new images continuously in your CI. The image tag must be replaced in your helm manifests. In order to automate and standardize this process we use [kbld](https://github.com/k14s/kbld). `kbld` handles the workflow for building and pushing images. It integrates with helm and kustomize really well because it doesn't care how manifests are generated.
 
 
 ### Define your application images
 
-before we can build images we must create some sources and image destinations so that `kbld` is able to know which images belong to your application. For the sake of simplicity we put them in `umbrella-chart/kbld-sources.yaml`. They look like `CRD's` but aren't applied to your cluster.
+Before we can build images, we must create some sources and image destinations so that `kbld` is able to know which images belong to your application. For the sake of simplicity we put them in `umbrella-chart/kbld-sources.yaml`. They look like `CRD's` but aren't applied to your cluster.
 
 ```yaml
 #! where to find demo-service source
