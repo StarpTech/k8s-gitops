@@ -219,10 +219,7 @@ kapp deploy -n default -a my-app -f <(sops -d ./.umbrella-state/state.yaml)
 
 ## Closing words
 
-:checkered_flag:! You have an automated CI/CD GitOps workflow to manage an microservice architecture at any scale. We don't rely on server components like a kubernetes operator.
-Many pieces can be replaced by other tools.
-
-The proposed solution is highly opinionated and I appreciate any feedback. Feel free to open an issue.
+:checkered_flag: As you can see the variety of tools is immense. The biggest challenge is to find the right balance for your organization. The proposed solution is highly opinionated but it tries to solve common problems with new and established tools. I placed particular value on a solution that doesn't require server components. I hope this guide will help organization/startups to invest in kubernetes. Feel free to contact me or open an issue.
 
 ## Demo
 
