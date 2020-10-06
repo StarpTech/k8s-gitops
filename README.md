@@ -43,7 +43,7 @@ According to [Managing Helm releases the GitOps way](https://github.com/fluxcd/h
 - [helm](https://helm.sh/) - Package manager
 - [kbld](https://github.com/k14s/kbld) - Image building and image pushing
 - [kapp](https://github.com/k14s/kapp) - Deployment tool
-- [kubeval](https://github.com/instrumenta/kubeval) - Validate your Kubernetes configuration files
+- [kubeval](https://github.com/instrumenta/kubeval) (optional) - Validate your Kubernetes configuration files
 - [kube-score](https://github.com/zegl/kube-score) (optional) - Static code analysis
 - [sops](https://github.com/mozilla/sops/) (optional) - Secret encryption
 
