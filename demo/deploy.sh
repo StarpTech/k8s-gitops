@@ -7,7 +7,7 @@ kbld -f ./temp-release/umbrella-chart -f umbrella-chart/kbld-sources.yaml --lock
 # Validate your Kubernetes configuration files
 # kubeval --ignore-missing-schemas .umbrella-state/state.yaml
 
-kapp deploy -n default -a my-app -f ./.umbrella-state/state.yaml
+kapp deploy -n default -a my-app -c -f ./.umbrella-state/state.yaml
 
 # decrypt with sops and pipe to kapp
 # kapp deploy -n default -a my-app -f <(sops -d ./.umbrella-state/state.yaml)

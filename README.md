@@ -17,7 +17,7 @@ There are many tools to practice GitOps. ArgoCD and FluxCD are the successor of 
 In search of something simpler I found the `k14s` tools. They are designed to be single-purpose and composable. They provide the required functionality to template, build, deploy without coupling to full-blown community solutions. Tools like Helm, Kustomize can be easily connected. The result is a predictable pipeline of client tools. The demo in this repository solves:
 
 - [X] The entire release can be described declaratively and stored in git.
-- [X] You can create branches to derivate your config and deploy them in your CI.
+- [X] You can create branches to derive your config and deploy them in your CI.
 - [X] You don't need to manage additional state on your cluster.
 - [X] You can easily reproduce the state on your local machine.
 - [X] The CI/CD lifecycle is sequential. ([Push](https://www.weave.works/blog/why-is-a-pull-vs-a-push-pipeline-important) based pipeline)
