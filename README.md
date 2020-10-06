@@ -102,7 +102,7 @@ If you practice CI you will test, build and deploy new images continuously in yo
 
 ### Define your application images
 
-Before we can build images, we must create some sources and image destinations so that `kbld` is able to know which images belong to your application. For the sake of simplicity we put them in `umbrella-chart/kbld-sources.yaml`. They look like `CRD's` but aren't applied to your cluster.
+Before we can build images, we must create some sources and image destinations so that `kbld` is able to know which images belong to your application. For the sake of simplicity, we put them in `umbrella-chart/kbld-sources.yaml`. They look like `CRD's` but they aren't applied to your cluster.
 
 ```yaml
 #! where to find demo-service source
@@ -125,7 +125,7 @@ destinations:
 
 ### Release snapshot
 
-This command will prerender your umbrella chart to `.umbrella-state/state.yaml`, builds and push all necessary images and replace all references in your manifests. The result is a snapshot of your release. The `kbld.lock.yml` represents a lock file of all tagged images. This is useful to ensure that the exact same images are used on subsequent deployments.
+This command will prerender your umbrella chart to `.umbrella-state/state.yaml`, builds and push all necessary images and replace all references in your manifests. The result is a snapshot of your desired cluster state. The `kbld.lock.yml` represents a lock file of all tagged images. This is useful to ensure that the exact same images are used on subsequent deployments.
 
 ```sh
 # template chart, build / push images to registry and replace images references with immutables tags
@@ -134,7 +134,7 @@ $ helm template my-app ./umbrella-chart | kbld -f - -f umbrella-chart/kbld-sourc
 
 #### Update the state in git
 
-The artifact directory `.umbrella-state/` must be commited to git. This means you can reproduce the state at any commit by trigger you CI pipeline. `[ci skip]` is necessary to avoid retriggering your CI if you update it in the pipeline.
+The artifact directory `.umbrella-state/` must be commited to git. This means you can reproduce the state at any commit by triggering you CI pipeline. `[ci skip]` is necessary to avoid reschedule your CI if you update `.umbrella-state/` it in the pipeline.
 
 ```sh
 git add .umbrella-state/* && git commit -m "[ci skip] New Release"
@@ -149,7 +149,7 @@ git add .umbrella-state/* && git commit -m "[ci skip] New Release"
 
 ## Deployment
 
-We use [kapp](https://github.com/k14s/kapp) to deploy the manifests to the kubernetes cluster. `Kapp` ensures that all ressources are properly installed in the right order. It provides an enhanced interface to understand what has really changed in your cluster. If you want to learn more you should check the [homepage](https://get-kapp.io/).
+We use [kapp](https://github.com/k14s/kapp) to deploy `./.umbrella-state/state.yaml` to the kubernetes cluster. `Kapp` ensures that all ressources are properly installed in the right order. It provides an enhanced interface to understand what has really changed in your cluster. If you want to learn more you should check the [homepage](https://get-kapp.io/).
 
 ```sh
 # deploy it on your cluster
