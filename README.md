@@ -78,7 +78,7 @@ kubectl apply -R -f my-staging
 kpt pkg update my-cockroachdb@gNEW_VERSION --strategy=resource-merge
 ```
 
-### Chart patching
+### Advanced templating
 
 Sometimes it is necessary to patch a specific resource. This can have several reasons:
 
