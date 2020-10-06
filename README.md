@@ -43,6 +43,7 @@ According to [Managing Helm releases the GitOps way](https://github.com/fluxcd/h
 - [helm](https://helm.sh/) - Package manager
 - [kbld](https://github.com/k14s/kbld) - Image building and image pushing
 - [kapp](https://github.com/k14s/kapp) - Deployment tool
+- [kpt](https://googlecontainertools.github.io/kpt/reference/pkg/) - Fetch, update, and sync configuration files using git
 - [kubeval](https://github.com/instrumenta/kubeval) (optional) - Validate your Kubernetes configuration files
 - [kube-score](https://github.com/zegl/kube-score) (optional) - Static code analysis
 - [sops](https://github.com/mozilla/sops/) (optional) - Secret encryption
@@ -59,7 +60,22 @@ According to [Managing Helm releases the GitOps way](https://github.com/fluxcd/h
 
 Helm allows you to manage a project composed of multiple microservices with a top-level [`umbrella-chart`](https://helm.sh/docs/howto/charts_tips_and_tricks/#complex-charts-with-many-dependencies). You can define [global](https://helm.sh/docs/chart_template_guide/subcharts_and_globals/#global-chart-values) chart values which are accessible in all sub-charts. 
 
-In big teams sharing charts can be an exhauasting tasks. In that situation you should think about to host your own Chart Repoitory. You can use [`chartmuseum`](https://github.com/helm/chartmuseum). The simpler solution is to host your charts on S3 and use the helm plugin [`S3`](https://github.com/hypnoglow/helm-s3) to make them accessible in the cli.
+### Chart distribution
+
+In big teams sharing charts can be an exhauasting tasks. In that situation you should think about a solution to host your own Chart Repository. You can use [`chartmuseum`](https://github.com/helm/chartmuseum). The simpler approach is to host your charts on S3 and use the helm plugin [`S3`](https://github.com/hypnoglow/helm-s3) to make them managable in the cli.
+
+There is another very interesting approach to share charts or configurations in general. Google has developed a tool called `kpt`. One of the features is to sync arbitrary files / subdirectories from a git repository. You can even merge upstream updates. This make it very easy to share files across teams without working in multiple repositories at the same time.
+
+```sh
+# fetch staging subdirectory
+kpt pkg get https://github.com/starptech/examples/staging@git-VERSION \
+  my-staging
+# just for demo purpose
+kubectl apply -R -f my-cockroachdb
+
+# make changes, merge changes and tag that version in the remote repository
+kpt pkg update my-cockroachdb@NEW_VERSION --strategy=resource-merge
+```
 
 ### :heavy_check_mark: Helm solves:
 
@@ -190,6 +206,8 @@ Checkout the [demo](./demo) to see how it looks like.
 ## More
 
 - [Combine helm with kustomize](https://github.com/thomastaylor312/advanced-helm-demos/tree/master/post-render)
+- [kpt an alternative (kapp)](https://googlecontainertools.github.io/kpt/)
+- [skaffold an alternative to (kbld + kapp)](https://github.com/GoogleContainerTools/skaffold)
 
 ## References
 
