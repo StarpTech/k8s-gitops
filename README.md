@@ -69,18 +69,17 @@ Helm allows you to manage a project composed of multiple microservices with a to
 
 In big teams sharing charts can be an exhauasting tasks. In that situation you should think about a solution to host your own Chart Repository. You can use [`chartmuseum`](https://github.com/helm/chartmuseum). The simpler approach is to host your charts on S3 and use the helm plugin [`S3`](https://github.com/hypnoglow/helm-s3) to make them managable with the helm cli.
 
-There is another very interesting approach to share charts or configurations in general. Google has developed a tool called [`kpt`](https://googlecontainertools.github.io/kpt/). One of the features is to sync arbitrary files / subdirectories from a git repository. You can even merge upstream updates. This make it very easy to share files across teams without working in multiple repositories at the same time.
+There is another very interesting approach to share charts or configurations in general. Google has developed a tool called [`kpt`](https://googlecontainertools.github.io/kpt/). One of the features is to sync arbitrary files / subdirectories from a git repository. You can even merge upstream updates. This make it very easy to share files across teams without working in multiple repositories at the same time. The solution would be to fetch a list of chart repositories and store them to `umbrella/charts/` and call `helm build`. Your local helm dependencies must be prefixed with `file://`.
 
 ```sh
-# fetch ./staging subdirectory
-kpt pkg get https://github.com/starptech/examples/staging@VERSION \
-  my-staging
+# fetch team B order-service subdirectory
+kpt pkg get https://github.com/myorg/charts/order-service@VERSION \
+  umbrella-chart/charts/order-service
 
-# just for demo purpose
-kubectl apply -R -f my-staging
+helm build
 
 # make changes, merge changes and tag that version in the remote repository
-kpt pkg update my-cockroachdb@gNEW_VERSION --strategy=resource-merge
+kpt pkg update umbrella-chart/charts/order-service@gNEW_VERSION --strategy=resource-merge
 ```
 
 ### Advanced templating
