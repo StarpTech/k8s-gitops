@@ -1,7 +1,7 @@
 <p align="center">
   <img alt="logo" src="https://raw.githubusercontent.com/StarpTech/k8s-gitops/main/logo.png" />
   <h3 align="center"><a href="https://helm.sh/">Helm</a> + <a href="https://github.com/k14s/kbld">kbld</a>  + <a href="https://github.com/k14s/kapp">kapp</a></h3>
-  <p align="center">The GitOps workflow to manage Kubernetes application at any scale (without server components).</p>
+  <p align="center">The GitOps workflow to manage Kubernetes applications at any scale (without server components).</p>
 </p>
 
 
