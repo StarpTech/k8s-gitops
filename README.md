@@ -13,9 +13,9 @@
 
 This guide describes a CI/CD workflow for Kubernetes that enables [GitOps](https://www.weave.works/technologies/gitops/) without relying on server components.
 
-There are many tools to practice GitOps. ArgoCD and FluxCD are the successor of it. Both tools are great but comes with a high cost. You need to manage a complex piece of software (kubernetes operator) in your cluster and it couples you to very specific solutions ([CRD's](https://kubernetes.io/docs/concepts/extend-kubernetes/api-extension/custom-resources/)). Additionally, they enfore a [Pull](https://www.weave.works/blog/why-is-a-pull-vs-a-push-pipeline-important) based CD workflow. I can't get used to practice this flow because it feels cumbersome although I'm aware of the benefits:
+There are many tools to practice GitOps. ArgoCD and FluxCD are the successors of it. Both tools are great but come with a high cost. You need to manage a complex piece of software (kubernetes operator) in your cluster and it couples you to very specific solutions ([CRD's](https://kubernetes.io/docs/concepts/extend-kubernetes/api-extension/custom-resources/)). Additionally, they enforce a [Pull](https://www.weave.works/blog/why-is-a-pull-vs-a-push-pipeline-important) based CD workflow. I can't get used to practicing this flow because it feels cumbersome although I'm aware of the benefits:
 
-- Automated updates of images without a connection to you cluster.
+- Automated updates of images without a connection to your cluster.
 - Two-way synchronization (docker registry, config-repository)
 - Out-of-sync detection
 
@@ -56,7 +56,7 @@ According to [Managing Helm releases the GitOps way](https://github.com/fluxcd/h
 
 ## Helm introduction
 
-[Helm](https://helm.sh/) is the package manager for Kubernetes. It provides an interface to manage chart dependencies. Helm guaranteed reproducable builds if you are working with the same helm values. Because all files are checked into git we can reproduce the helm templates at any commit.
+[Helm](https://helm.sh/) is the package manager for Kubernetes. It provides an interface to manage chart dependencies. Helm guaranteed reproducible builds if you are working with the same helm values. Because all files are checked into git we can reproduce the helm templates at any commit.
 
 ### Dependency Management
 
@@ -64,21 +64,21 @@ According to [Managing Helm releases the GitOps way](https://github.com/fluxcd/h
 - `helm dependency list` - List the dependencies for the given chart
 - `helm dependency update` - Update charts/ based on the contents of Chart.yaml
 
-Helm allows you to manage a project composed of multiple microservices with a top-level [`umbrella-chart`](https://helm.sh/docs/howto/charts_tips_and_tricks/#complex-charts-with-many-dependencies). You can define [global](https://helm.sh/docs/chart_template_guide/subcharts_and_globals/#global-chart-values) chart values which are accessible in all sub-charts. 
+Helm allows you to manage a project composed of multiple microservices with a top-level [`umbrella-chart`](https://helm.sh/docs/howto/charts_tips_and_tricks/#complex-charts-with-many-dependencies). You can define [global](https://helm.sh/docs/chart_template_guide/subcharts_and_globals/#global-chart-values) chart values that are accessible in all sub-charts. 
 
 ### Chart distribution
 
 #### Chart Repository
 
-In big teams sharing charts can be an exhauasting tasks. In that situation you should think about a solution to host your own Chart Repository. You can use [`chartmuseum`](https://github.com/helm/chartmuseum).
+In big teams sharing charts can be exhausting tasks. In that situation, you should think about a solution to host your own Chart Repository. You can use [`chartmuseum`](https://github.com/helm/chartmuseum).
 
 #### S3
 
-The simpler approach is to host your charts on S3 and use the helm plugin [`S3`](https://github.com/hypnoglow/helm-s3) to make them managable with the helm cli.
+The simpler approach is to host your charts on S3 and use the helm plugin [`S3`](https://github.com/hypnoglow/helm-s3) to make them manageable with the helm cli.
 
 #### kpt
 
-There is another very interesting approach to share charts or configurations in general. Google has developed a tool called [`kpt`](https://googlecontainertools.github.io/kpt/). One of the features is to sync arbitrary files / subdirectories from a git repository. You can even merge upstream updates. This make it very easy to share files across teams without working in multiple repositories at the same time. The solution would be to fetch a list of chart repositories and store them to `umbrella/charts/` and call `helm build`. Your `Chart.yaml` dependencies must be prefixed with `file://`.
+There is another very interesting approach to share charts or configurations in general. Google has developed a tool called [`kpt`](https://googlecontainertools.github.io/kpt/). One of the features is to sync arbitrary files/subdirectories from a git repository. You can even merge upstream updates. This makes it very easy to share files across teams without working in multiple repositories at the same time. The solution would be to fetch a list of chart repositories and store them to `umbrella/charts/` and call `helm build`. Your `Chart.yaml` dependencies must be prefixed with `file://`.
 
 ```sh
 # fetch team B order-service subdirectory
@@ -94,7 +94,7 @@ kpt pkg update umbrella-chart/charts/order-service@gNEW_VERSION --strategy=resou
 
 #### Distribute configurations with containers
 
-With [`kpt fn`](https://googlecontainertools.github.io/kpt/reference/fn/) you can generate, transform, and validate configuration files from images, starlark scripts, or binary executables. The command below will provide `DIR/` as input to a container instance of `gcr.io/example.com/my-fn` execute the function in it and store the output in `charts/order-service`. This has great potentional to align your tooling with container.
+With [`kpt fn`](https://googlecontainertools.github.io/kpt/reference/fn/) you can generate, transform, and validate configuration files from images, starlark scripts, or binary executables. The command below will provide `DIR/` as an input to a container instance of `gcr.io/example.com/my-fn` executing the function in it and store the output in `charts/order-service`. This has great potential to align your tooling with containers.
 
 > DOCKER all the things!
 
@@ -114,7 +114,7 @@ Sometimes helm is not enough. This can have several reasons:
 - You want to keep base charts simple.
 - You want to abstract environments.
 
-In that case you can use tools like [kustomize](https://github.com/kubernetes-sigs/kustomize) or [ytt](https://github.com/k14s/ytt).
+In that case, you can use tools like [kustomize](https://github.com/kubernetes-sigs/kustomize) or [ytt](https://github.com/k14s/ytt).
 
 ```sh
 # this approach allows you to patch specific files because file stucture is preserved
@@ -135,7 +135,7 @@ ytt -f ./temp-release --ignore-unknown-comments --output-files ./temp-release
 
 ## The umbrella-state
 
-The directory `umbrella-state` refers to the single-source-of truth of the desired state of your cluster at a particular commit. The folder contains all kubernetes manifests and `.lock` files. The folder must be commited to git.
+The directory `umbrella-state` refers to the single-source-of truth of the desired state of your cluster at a particular commit. The folder contains all kubernetes manifests and `.lock` files. The folder must be committed to git.
 
 ### :heavy_check_mark: The umbrella-state solves:
 
@@ -144,7 +144,7 @@ The directory `umbrella-state` refers to the single-source-of truth of the desir
 
 ## Build, Test and Push your images
 
-If you practice CI you will test, build and deploy new images continuously in your CI. The image tag must be replaced in your helm manifests. In order to automate and standardize this process we use [kbld](https://github.com/k14s/kbld). `kbld` handles the workflow for building and pushing images. It integrates with helm and kustomize really well because it doesn't care how manifests are generated.
+If you practice CI you will test, build and deploy new images continuously in your CI. The image tag must be replaced in your helm manifests. In order to automate and standardize this process, we use [kbld](https://github.com/k14s/kbld). `kbld` handles the workflow for building and pushing images. It integrates with helm and kustomize really well because it doesn't care how manifests are generated.
 
 
 ### Define your application images
@@ -198,7 +198,7 @@ git add .umbrella-state/* && git commit -m "[ci skip] New Release"
 
 ## Deployment
 
-We use [kapp](https://github.com/k14s/kapp) to deploy `.umbrella-state/state.yaml` to the kubernetes cluster. `Kapp` ensures that all ressources are properly installed in the right order. It provides an enhanced interface to understand what has really changed in your cluster. If you want to learn more you should check the [homepage](https://get-kapp.io/).
+We use [kapp](https://github.com/k14s/kapp) to deploy `.umbrella-state/state.yaml` to the kubernetes cluster. `Kapp` ensures that all resources are properly installed in the right order. It provides an enhanced interface to understand what has really changed in your cluster. If you want to learn more you should check the [homepage](https://get-kapp.io/).
 
 ```sh
 # deploy it on your cluster
@@ -226,17 +226,17 @@ $ kapp delete -a my-app --yes
 
 ## Environment Management
 
-Here are some ideas how you can deal with multiple environments:
+Here are some ideas about how you can deal with multiple environments:
 
-- **Monorepo**: Put your infrastucture code along your code. You can create different branches for different environments.
-- **Multiple repositories**: Create a config-repository which reflect the state of your environment. In that case you don't need to rebuild your container for config changes and there is no "leading" application repository.
-- **Preview deployments**: Manage a local umbrella-chart which describes the preview-environment. You could also create a config-repository.
+- **Monorepo**: Put your infrastructure code along with your code. You can create different branches for different environments.
+- **Multiple repositories**: Create a config-repository which reflect the state of your environment. In that case, you don't need to rebuild your container for config changes and there is no "leading" application repository.
+- **Preview deployments**: Manage a local umbrella-chart that describes the preview-environment. You could also create a config-repository.
 
 ## Secret Management
 
 ### sops
 You can use [sops](https://github.com/mozilla/sops/) to encrypt yaml files. The files must be encrypted before they are distributed in helm charts.
-In the deployment process you can decrypt them with a single command. Sops support several KMS services (Hashicorp Vault, AWS Secrets Manager, etc).
+In the deployment process, you can decrypt them with a single command. Sops support several KMS services (Hashicorp Vault, AWS Secrets Manager, etc).
 
 > :bulb: CI solutions are usually shipped with a secret store. There you can store your certificate to encrypt the secrets.
 
@@ -250,7 +250,7 @@ kapp deploy -n default -a my-app -f <(sops -d ./.umbrella-state/state.yaml)
 
 ### Controller
 
-Where kubernetes controller really show its strength is `locality`. They are deployed in your cluster and are protected by their environment. We can use that fact and deploy a controller like [`secretgen-controller`](https://github.com/k14s/secretgen-controller) which is responsible to generate secret on the cluster. `secretgen-controller` works with CRD's. In that way the procedure to generate the secret is stored in git but you can't run into the situation where you accidentally commit your password. You will never touch the secret.
+Where kubernetes controller really show its strength is `locality`. They are deployed in your cluster and are protected by their environment. We can use that fact and deploy a controller like [`secretgen-controller`](https://github.com/k14s/secretgen-controller) which is responsible to generate secret on the cluster. `secretgen-controller` works with CRD's. In that way, the procedure to generate the secret is stored in git but you can't run into the situation where you accidentally commit your password. You will never touch the secret.
 
 ## Closing words
 
@@ -258,7 +258,7 @@ Where kubernetes controller really show its strength is `locality`. They are dep
 
 ## Demo
 
-Checkout the [demo](./demo) to see how it looks like.
+Check out the [demo](./demo) to see how it looks like.
 
 ## More
 
