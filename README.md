@@ -225,7 +225,7 @@ find ./temp-release -name "*secret*" -exec sops -e -i {} \;
 kapp deploy -n default -a my-app -f <(sops -d ./.umbrella-state/state.yaml)
 ```
 
-> :bulb: Another approach is to enrich secrets in the pipeline process and pass them to the template tool. CI solutions are usually shipped with a secret store.
+> :bulb: CI solutions are usually shipped with a secret store. There you can store your certificate to encrypt the secrets.
 
 ## Closing words
 
