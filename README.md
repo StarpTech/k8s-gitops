@@ -214,8 +214,11 @@ Here are some ideas how you can deal with multiple environments:
 
 ## Secret Management
 
+### sops
 You can use [sops](https://github.com/mozilla/sops/) to encrypt yaml files. The files must be encrypted before they are distributed in helm charts.
 In the deployment process you can decrypt them with a single command. Sops support several KMS services (Hashicorp Vault, AWS Secrets Manager, etc).
+
+> :bulb: CI solutions are usually shipped with a secret store. There you can store your certificate to encrypt the secrets.
 
 ```sh
 # As a chart maintainer I can encrypt my secrets with:
@@ -225,7 +228,9 @@ find ./temp-release -name "*secret*" -exec sops -e -i {} \;
 kapp deploy -n default -a my-app -f <(sops -d ./.umbrella-state/state.yaml)
 ```
 
-> :bulb: CI solutions are usually shipped with a secret store. There you can store your certificate to encrypt the secrets.
+### Controller
+
+Where controller really show its strength is `locality`. They are deployed in your cluster and are protected by their environment. We can use that fact and deploy a controller like [`secretgen-controller`](https://github.com/k14s/secretgen-controller) which is responsible to generate secret on the cluster. In that way the procedure to generate the secret is stored in git but you can't run into the situation where you accidentally commit your password. You will never touch the secret.
 
 ## Closing words
 
