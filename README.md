@@ -114,7 +114,7 @@ ytt -f ./temp-release --ignore-unknown-comments --output-files ./temp-release
 
 Helm guaranteed reproducable builds if you are working with the same helm values. Because all files are checked into git we can reproduce the helm templates at any commit.
 
-The `umbrella-state` refers to the single-source-of truth of the desired state of your cluster at a particular commit.
+The directory `umbrella-state` refers to the single-source-of truth of the desired state of your cluster at a particular commit. The folder must be commited to git.
 
 ### :heavy_check_mark: The umbrella-state solves:
 
