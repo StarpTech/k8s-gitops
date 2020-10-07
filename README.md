@@ -76,6 +76,7 @@ There is another very interesting approach to share charts or configurations in 
 kpt pkg get https://github.com/myorg/charts/order-service@VERSION \
   umbrella-chart/charts/order-service
 
+# lock dependencies
 helm build
 
 # make changes, merge changes and tag that version in the remote repository
