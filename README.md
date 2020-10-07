@@ -4,12 +4,12 @@
   <p align="center">The GitOps workflow to manage Kubernetes application at any scale (without server components).</p>
 </p>
 
+
+# Preface
+
 <p align="center">
   <img alt="logo" src="https://raw.githubusercontent.com/StarpTech/k8s-gitops/main/flow.png" />
 </p>
-
-
-# Preface
 
 This guide describes a CI/CD workflow for Kubernetes that enables [GitOps](https://www.weave.works/technologies/gitops/) without relying on server components.
 
