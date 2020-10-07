@@ -71,7 +71,7 @@ In big teams sharing charts can be an exhauasting tasks. In that situation you s
 
 #### kpt
 
-There is another very interesting approach to share charts or configurations in general. Google has developed a tool called [`kpt`](https://googlecontainertools.github.io/kpt/). One of the features is to sync arbitrary files / subdirectories from a git repository. You can even merge upstream updates. This make it very easy to share files across teams without working in multiple repositories at the same time. The solution would be to fetch a list of chart repositories and store them to `umbrella/charts/` and call `helm build`. Your local helm dependencies must be prefixed with `file://`.
+There is another very interesting approach to share charts or configurations in general. Google has developed a tool called [`kpt`](https://googlecontainertools.github.io/kpt/). One of the features is to sync arbitrary files / subdirectories from a git repository. You can even merge upstream updates. This make it very easy to share files across teams without working in multiple repositories at the same time. The solution would be to fetch a list of chart repositories and store them to `umbrella/charts/` and call `helm build`. Your `Chart.yaml` dependencies must be prefixed with `file://`.
 
 ```sh
 # fetch team B order-service subdirectory
