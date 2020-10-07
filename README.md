@@ -187,7 +187,7 @@ Every change in the artifact directory `.umbrella-state/` must be commited to gi
 git add .umbrella-state/* && git commit -m "[ci skip] New Release"
 ```
 
-> :bulb: As shown in the [Chart distribution](#chart-distribution) section. You could use [`kpt`](https://googlecontainertools.github.io/kpt/) to share the state of your repository. This might be useful if you want to point to a specific infrastructure setup. Maybe the production setup which can adjusted afterwards with [kustomize](https://github.com/kubernetes-sigs/kustomize) or [ytt](https://github.com/k14s/ytt)?
+> :bulb: As shown in the [Chart distribution](#chart-distribution) section. You could use [`kpt`](https://googlecontainertools.github.io/kpt/) to share the state of your repository. This might be useful if you want to point to a specific infrastructure setup. Maybe the production setup which can be adjusted afterwards with [kustomize](https://github.com/kubernetes-sigs/kustomize) or [ytt](https://github.com/k14s/ytt)?
 
 ### :heavy_check_mark: kbld / umbrella-state solves:
 
