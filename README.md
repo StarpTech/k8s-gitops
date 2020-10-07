@@ -118,8 +118,6 @@ Helm guaranteed reproducable builds if you are working with the same helm values
 
 The directory `umbrella-state` refers to the single-source-of truth of the desired state of your cluster at a particular commit. The folder must be commited to git.
 
-> :bulb: As shown in the [Chart distribution](#chart-distribution) section. You could use [`kpt`](https://googlecontainertools.github.io/kpt/) to share the state of your repository. This might be useful if you want to point to a specific infrastructure setup. Maybe the production setup which can adjusted afterwards with [kustomize](https://github.com/kubernetes-sigs/kustomize) or [ytt](https://github.com/k14s/ytt)?
-
 ### :heavy_check_mark: The umbrella-state solves:
 
 - [X] Desired system state versioned in Git.
@@ -169,6 +167,8 @@ The artifact directory `.umbrella-state/` must be commited to git. This means yo
 ```sh
 git add .umbrella-state/* && git commit -m "[ci skip] New Release"
 ```
+
+> :bulb: As shown in the [Chart distribution](#chart-distribution) section. You could use [`kpt`](https://googlecontainertools.github.io/kpt/) to share the state of your repository. This might be useful if you want to point to a specific infrastructure setup. Maybe the production setup which can adjusted afterwards with [kustomize](https://github.com/kubernetes-sigs/kustomize) or [ytt](https://github.com/k14s/ytt)?
 
 ### :heavy_check_mark: kbld / umbrella-state solves:
 
