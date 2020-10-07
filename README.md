@@ -26,6 +26,7 @@ In search of something simpler I found the `k14s` tools. They are designed to be
 - [X] You don't need to run additional software on your cluster.
 - [X] You can easily reproduce the state on your local machine.
 - [X] The CI/CD lifecycle is sequential. ([Push](https://www.weave.works/blog/why-is-a-pull-vs-a-push-pipeline-important) based pipeline)
+- [X] No coupling to specific CD solutions. Tools can be replaced like lego.
 
 According to [Managing Helm releases the GitOps way](https://github.com/fluxcd/helm-operator-get-started) you need three things to apply the GitOps pipeline model. I think we can refute the last point.
 
