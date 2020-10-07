@@ -158,9 +158,9 @@ This command will prerender your umbrella chart to `.umbrella-state/state.yaml`,
 $ helm template my-app ./umbrella-chart | kbld -f - -f umbrella-chart/kbld-sources.yaml --lock-output .umbrella-state/kbld.lock.yml --registry-verify-certs=false > ./.umbrella-state/state.yaml
 ```
 
-#### Update the state in git
+#### Update the state in your CI
 
-The artifact directory `.umbrella-state/` must be commited to git. This means you can reproduce the state at any commit by triggering you CI pipeline. `[ci skip]` is necessary to avoid reschedule your CI if you update `.umbrella-state/` it in the pipeline.
+Every change in the artifact directory `.umbrella-state/` must be commited to git. This means you can reproduce the state at any commit by triggering you CI pipeline. `[ci skip]` is necessary to avoid reschedule your CI if you update `.umbrella-state/` it in your CI pipeline.
 
 ```sh
 git add .umbrella-state/* && git commit -m "[ci skip] New Release"
