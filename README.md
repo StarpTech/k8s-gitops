@@ -121,6 +121,8 @@ The directory `umbrella-state` refers to the single-source-of truth of the desir
 - [X] Desired system state versioned in Git.
 - [X] Single-source of truth.
 
+> :bulb: As shown in the Helm section. You could use [`kpt`](https://googlecontainertools.github.io/kpt/) to share the state of your repository. This might be useful if you want to point to a specific infrastrucure setup. Maybe the production setup which can adjusted afterwards with [kustomize](https://github.com/kubernetes-sigs/kustomize) or [ytt](https://github.com/k14s/ytt)?
+
 ## Build, Test and Push your images
 
 If you practice CI you will test, build and deploy new images continuously in your CI. The image tag must be replaced in your helm manifests. In order to automate and standardize this process we use [kbld](https://github.com/k14s/kbld). `kbld` handles the workflow for building and pushing images. It integrates with helm and kustomize really well because it doesn't care how manifests are generated.
