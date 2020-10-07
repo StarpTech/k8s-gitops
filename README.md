@@ -68,7 +68,13 @@ Helm allows you to manage a project composed of multiple microservices with a to
 
 ### Chart distribution
 
-In big teams sharing charts can be an exhauasting tasks. In that situation you should think about a solution to host your own Chart Repository. You can use [`chartmuseum`](https://github.com/helm/chartmuseum). The simpler approach is to host your charts on S3 and use the helm plugin [`S3`](https://github.com/hypnoglow/helm-s3) to make them managable with the helm cli.
+#### Chart Repository
+
+In big teams sharing charts can be an exhauasting tasks. In that situation you should think about a solution to host your own Chart Repository. You can use [`chartmuseum`](https://github.com/helm/chartmuseum).
+
+#### S3
+
+The simpler approach is to host your charts on S3 and use the helm plugin [`S3`](https://github.com/hypnoglow/helm-s3) to make them managable with the helm cli.
 
 #### kpt
 
@@ -85,6 +91,20 @@ helm build
 # make changes, merge changes and tag that version in the remote repository
 kpt pkg update umbrella-chart/charts/order-service@gNEW_VERSION --strategy=resource-merge
 ```
+
+#### Distribute configurations with containers
+
+With [`kpt fn`](https://googlecontainertools.github.io/kpt/reference/fn/) you can generate, transform, and validate configuration files from images, starlark scripts, or binary executables. The command below will provide `DIR/` as input to a container instance of `gcr.io/example.com/my-fn` execute the function in it and store the output in `charts/order-service`. This has great potentional to align your tooling with container.
+
+> DOCKER all the things!
+
+```sh
+# run a function using explicit sources and sinks
+kpt fn source DIR/ |
+  kpt fn run --image gcr.io/example.com/my-fn |
+  kpt fn sink charts/order-service/
+```
+
 
 ### Advanced templating
 
