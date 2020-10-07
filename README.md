@@ -8,7 +8,7 @@
 # Preface
 
 <p align="center">
-  <img alt="logo" src="https://raw.githubusercontent.com/StarpTech/k8s-gitops/main/flow.png" />
+  <img alt="logo" src="https://raw.githubusercontent.com/StarpTech/k8s-gitops/main/flow.png?timestamp=123" />
 </p>
 
 This guide describes a CI/CD workflow for Kubernetes that enables [GitOps](https://www.weave.works/technologies/gitops/) without relying on server components.
