@@ -69,6 +69,8 @@ Helm allows you to manage a project composed of multiple microservices with a to
 
 In big teams sharing charts can be an exhauasting tasks. In that situation you should think about a solution to host your own Chart Repository. You can use [`chartmuseum`](https://github.com/helm/chartmuseum). The simpler approach is to host your charts on S3 and use the helm plugin [`S3`](https://github.com/hypnoglow/helm-s3) to make them managable with the helm cli.
 
+#### kpt
+
 There is another very interesting approach to share charts or configurations in general. Google has developed a tool called [`kpt`](https://googlecontainertools.github.io/kpt/). One of the features is to sync arbitrary files / subdirectories from a git repository. You can even merge upstream updates. This make it very easy to share files across teams without working in multiple repositories at the same time. The solution would be to fetch a list of chart repositories and store them to `umbrella/charts/` and call `helm build`. Your local helm dependencies must be prefixed with `file://`.
 
 ```sh
@@ -116,12 +118,12 @@ Helm guaranteed reproducable builds if you are working with the same helm values
 
 The directory `umbrella-state` refers to the single-source-of truth of the desired state of your cluster at a particular commit. The folder must be commited to git.
 
+> :bulb: As shown in the [Chart distribution](#chart-distribution) section. You could use [`kpt`](https://googlecontainertools.github.io/kpt/) to share the state of your repository. This might be useful if you want to point to a specific infrastructure setup. Maybe the production setup which can adjusted afterwards with [kustomize](https://github.com/kubernetes-sigs/kustomize) or [ytt](https://github.com/k14s/ytt)?
+
 ### :heavy_check_mark: The umbrella-state solves:
 
 - [X] Desired system state versioned in Git.
 - [X] Single-source of truth.
-
-> :bulb: As shown in the Helm section. You could use [`kpt`](https://googlecontainertools.github.io/kpt/) to share the state of your repository. This might be useful if you want to point to a specific infrastrucure setup. Maybe the production setup which can adjusted afterwards with [kustomize](https://github.com/kubernetes-sigs/kustomize) or [ytt](https://github.com/k14s/ytt)?
 
 ## Build, Test and Push your images
 
