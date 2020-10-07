@@ -263,8 +263,8 @@ Check out the [demo](./demo) to see how it looks like.
 ## More
 
 - [Combine helm with kustomize](https://github.com/thomastaylor312/advanced-helm-demos/tree/master/post-render)
-- [kpt](https://googlecontainertools.github.io/kpt/)
-- [skaffold an alternative to (kbld + kapp)](https://github.com/GoogleContainerTools/skaffold)
+- [Skaffold an alternative to (kbld + kapp)](https://github.com/GoogleContainerTools/skaffold)
+- [Managing Applications in Production: Helm vs ytt & kapp](https://www.youtube.com/watch?v=WJw1MDFMVuk)
 
 ## References
 
