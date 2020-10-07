@@ -250,7 +250,7 @@ kapp deploy -n default -a my-app -f <(sops -d ./.umbrella-state/state.yaml)
 
 ### Controller
 
-Where kubernetes controller really show its strength is `locality`. They are deployed in your cluster and are protected by their environment. We can use that fact and deploy a controller like [`secretgen-controller`](https://github.com/k14s/secretgen-controller) which is responsible to generate secret on the cluster. In that way the procedure to generate the secret is stored in git but you can't run into the situation where you accidentally commit your password. You will never touch the secret.
+Where kubernetes controller really show its strength is `locality`. They are deployed in your cluster and are protected by their environment. We can use that fact and deploy a controller like [`secretgen-controller`](https://github.com/k14s/secretgen-controller) which is responsible to generate secret on the cluster. `secretgen-controller` works with CRD's. In that way the procedure to generate the secret is stored in git but you can't run into the situation where you accidentally commit your password. You will never touch the secret.
 
 ## Closing words
 
