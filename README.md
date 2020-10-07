@@ -224,6 +224,8 @@ find ./temp-release -name "*secret*" -exec sops -e -i {} \;
 kapp deploy -n default -a my-app -f <(sops -d ./.umbrella-state/state.yaml)
 ```
 
+> :bulb: Another approach is to enrich secrets in the pipeline process and pass them to the template tool. CI solutions are usually shipped with a secret store.
+
 ## Closing words
 
 :checkered_flag: As you can see the variety of tools is immense. The biggest challenge is to find the right balance for your organization. The proposed solution is highly opinionated but it tries to solve common problems with new and established tools. I placed particular value on a solution that doesn't require server components. I hope this guide will help organization/startups to invest in kubernetes. Feel free to contact me or open an issue.
