@@ -55,7 +55,7 @@ According to [Managing Helm releases the GitOps way](https://github.com/fluxcd/h
 
 ## Helm introduction
 
-[Helm](https://helm.sh/) is the package manager for Kubernetes. It provides an interface to manage chart dependencies.
+[Helm](https://helm.sh/) is the package manager for Kubernetes. It provides an interface to manage chart dependencies. Helm guaranteed reproducable builds if you are working with the same helm values. Because all files are checked into git we can reproduce the helm templates at any commit.
 
 ### Dependency Management
 
@@ -114,9 +114,7 @@ ytt -f ./temp-release --ignore-unknown-comments --output-files ./temp-release
 
 ## The umbrella-state
 
-Helm guaranteed reproducable builds if you are working with the same helm values. Because all files are checked into git we can reproduce the helm templates at any commit.
-
-The directory `umbrella-state` refers to the single-source-of truth of the desired state of your cluster at a particular commit. The folder must be commited to git.
+The directory `umbrella-state` refers to the single-source-of truth of the desired state of your cluster at a particular commit. The folder contains all kubernetes manifests and `.lock` files. The folder must be commited to git.
 
 ### :heavy_check_mark: The umbrella-state solves:
 
