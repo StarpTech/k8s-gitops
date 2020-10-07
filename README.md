@@ -207,9 +207,9 @@ $ kapp delete -a my-app --yes
 
 Here are some ideas how you can deal with multiple environments:
 
-- Monorepo: Put your infrastucture code along your code. You can create different branches for different environments.
-- Multiple repositories: Create a config-repository which reflect the state of your environment. In that case you don't need to rebuild your container for config changes and there is no "leading" application repository.
-- Preview deployments: Manage a local umbrella-chart which describes the preview-environment. You could also create a config-repository.
+- **Monorepo**: Put your infrastucture code along your code. You can create different branches for different environments.
+- **Multiple repositories**: Create a config-repository which reflect the state of your environment. In that case you don't need to rebuild your container for config changes and there is no "leading" application repository.
+- **Preview deployments**: Manage a local umbrella-chart which describes the preview-environment. You could also create a config-repository.
 
 ## Secret Management
 
