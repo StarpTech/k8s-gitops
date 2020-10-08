@@ -11,6 +11,8 @@
   <img alt="logo" src="https://raw.githubusercontent.com/StarpTech/k8s-gitops/main/workflow.png" />
 </p>
 
+>  Technology should not make our lives harder. Choosing a specific technology should not change the way you do something very basic so drastically that it's harder to use, as opposed to easier to use. That's the whole point of technology. - Chris Short
+
 This guide describes a CI/CD workflow for Kubernetes that enables [GitOps](https://www.weave.works/technologies/gitops/) without relying on server components.
 
 There are many tools to practice GitOps. ArgoCD and FluxCD are the successors of it. Both tools are great but come with a high cost. You need to manage a complex piece of software (kubernetes operator) in your cluster and it couples you to very specific solutions ([CRD's](https://kubernetes.io/docs/concepts/extend-kubernetes/api-extension/custom-resources/)). Additionally, they enforce a [Pull](https://www.weave.works/blog/why-is-a-pull-vs-a-push-pipeline-important) based CD workflow. I can't get used to practicing this flow because it feels cumbersome although I'm aware of the benefits:
@@ -18,8 +20,6 @@ There are many tools to practice GitOps. ArgoCD and FluxCD are the successors of
 - Automated updates of images without a connection to your cluster.
 - Two-way synchronization (docker registry, config-repository)
 - Out-of-sync detection
-
->  Technology should not make our lives harder. Choosing a specific technology should not change the way you do something very basic so drastically that it's harder to use, as opposed to easier to use. That's the whole point of technology. **Chris Short**
 
 In search of something simpler I found the `k14s` tools. They are designed to be single-purpose and composable. They provide the required functionality to template, build, deploy without coupling to full-blown community solutions. Tools like Helm, Kustomize can be easily connected. The result is a predictable pipeline of client tools. The demo in this repository solves:
 
@@ -256,7 +256,7 @@ Where kubernetes controller really show its strength is `locality`. They are dep
 
 ## Closing words
 
-> The hardest thing [about running on Kubernetes] is gluing all the pieces together. You need to think more holistically about your systems and get a deep understanding of what you’re working with. **Chris Short**
+> The hardest thing [about running on Kubernetes] is gluing all the pieces together. You need to think more holistically about your systems and get a deep understanding of what you’re working with. - Chris Short
 
 :checkered_flag: As you can see the variety of tools is immense. The biggest challenge is to find the right balance for your organization. The proposed solution is highly opinionated but it tries to solve common problems with new and established tools. I placed particular value on a solution that doesn't require server components. I hope this guide will help organization/startups to invest in kubernetes. Feel free to contact me or open an issue.
 
