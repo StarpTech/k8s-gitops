@@ -36,7 +36,7 @@ We consider each directory as a separate repository. That should reflect a real-
 │   ├── .release                        (temporary snapshot of the release artifact)
 │   │   ├── umbrella-chart
 │   │   └── state.yaml
-│   ├── app-locks                       (image references to ensure reproducible builds)  
+│   ├── app-locks                       (image locks to point to a specific version)  
 │   │   └── demo-service.kbld.lock.yml
 │   ├── umbrella-chart                  (collection of helm charts which describe the infra)
 │   │   ├── charts
