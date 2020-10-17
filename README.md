@@ -29,7 +29,7 @@ According to [Managing Helm releases the GitOps way](https://github.com/fluxcd/h
 
 ## Project structure
 
-We consider each directory as a seperate repository. That should reflect a real world scenario with multiple applications.
+We consider each directory as a separate repository. That should reflect a real-world scenario with multiple applications.
 
 ```
 ├── config-repository                   (contains all kubernetes manifests)
@@ -142,13 +142,13 @@ ytt -f .release --ignore-unknown-comments --output-files .release
 
 ## The application repository
 
-If you practice CI you will test, build and deploy new images continuously in your CI. Every build produce an immutable image tag that must be replaced in your helm manifests. In order to automate and standardize this process, we use [kbld](https://github.com/k14s/kbld). `kbld` handles the workflow for building and pushing images. In your pipeline you need to run:
+If you practice CI you will test, build and deploy new images continuously in your CI. Every build produces an immutable image tag that must be replaced in your helm manifests. In order to automate and standardize this process, we use [kbld](https://github.com/k14s/kbld). `kbld` handles the workflow for building and pushing images. In your pipeline you need to run:
 
 ```
 ./demo-service-repository/build.sh
 ```
 
-This command will build and push the image and outputs a `demo-service.kbld.lock` file. This file must be commited to the `config-repository/app-locks` to ensure that every deployment reference to the correct images. This procedure will trigger the CI in the config-repository and allows you to practice Continues-Deployment.
+This command will build and push the image and outputs a `demo-service.kbld.lock` file. This file must be committed to the `config-repository/app-locks` to ensure that every deployment reference to the correct images. This procedure will trigger the CI in the config-repository and allows you to practice Continues-Deployment.
 
 ### Define your application images
 
@@ -156,11 +156,11 @@ Before we can build images, we must create some sources and image destinations s
 
 ## The config repository
 
-The directory `config-repository/.release` refers to the temporary desired state of your cluster. It's generated on your CI pipeline. The folder contains all kubernetes manifests files.
+The directory `config-repository/.release` refers to the temporary desired state of your cluster. It's generated on your CI pipeline. The folder contains all kubernetes manifest files.
 
 ### Release snapshot
 
-This command will prerender your umbrella chart to `config-repository/.release/state.yaml`, builds and push all necessary images and replace all image references in your manifests. It's important to note that no image is build in this step. We reuse all prerendered images references from `app-locks`. The result is a snapshot of your desired cluster state at a particular commit. The CD pipeline will deploy it straight to your cluster.
+This command will prerender your umbrella chart to `config-repository/.release/state.yaml`, builds and push all necessary images and replace all image references in your manifests. It's important to note that no image is built in this step. We reuse all prerendered images references from `app-locks`. The result is a snapshot of your desired cluster state at a particular commit. The CD pipeline will deploy it straight to your cluster.
 
 ```sh
 $ ./config-repository/render.sh
