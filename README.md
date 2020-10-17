@@ -178,7 +178,6 @@ $ ./config-repository/render.sh
 We use [kapp](https://github.com/k14s/kapp) to deploy our resources to kubernetes. `Kapp` ensures that all resources are properly installed in the right order. It provides an enhanced interface to understand what has really changed in your cluster. If you want to learn more you should check the [homepage](https://get-kapp.io/).
 
 ```sh
-# deploy it to your cluster
 $ ./config-repository/deploy.sh
 ```
 
