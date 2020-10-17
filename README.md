@@ -24,7 +24,6 @@ There are many tools to practice GitOps. ArgoCD and FluxCD are the successors of
 In search of something simpler I found the `k14s` tools. They are designed to be single-purpose and composable. They provide the required functionality to template, build, deploy without coupling to full-blown community solutions. Tools like Helm, Kustomize can be easily connected. The result is a predictable pipeline of client tools. The demo in this repository solves:
 
 - [X] The entire release can be described declaratively and stored in git.
-- [X] You can create branches to derive your config and deploy them in your CI.
 - [X] You don't need to run additional software on your cluster.
 - [X] You can easily reproduce the state on your local machine.
 - [X] The CI/CD lifecycle is sequential. ([Push](https://www.weave.works/blog/why-is-a-pull-vs-a-push-pipeline-important) based pipeline)
@@ -33,17 +32,26 @@ In search of something simpler I found the `k14s` tools. They are designed to be
 According to [Managing Helm releases the GitOps way](https://github.com/fluxcd/helm-operator-get-started) you need three things to apply the GitOps pipeline model. I think we can refute the last point.
 
 ## Project structure
+
+We consider each directory as a seperate repository. That should reflect a real world scenario with multiple applications.
+
 ```
-├── umbrella-chart
-│   ├── charts
-│   │   └── demo-service
-│   ├── Chart.lock
-|   ├── values.yaml
-|   ├── kbld-sources.yaml
-│   └── Chart.yaml
-├── .umbrella-state
-│   ├── kbld.lock.yml
-|   └── state.yaml (snapshot of the release artifact)
+├── config-repository                   (contains all kubernetes manifests)
+│   ├── .release                        (temporary snapshot of the release artifact)
+│   │   ├── umbrella-chart
+│   │   └── state.yaml
+│   ├── app-locks                       (image references to ensure reproducible builds)  
+│   │   └── demo-service.kbld.lock.yml
+│   ├── umbrella-chart                  (collection of helm charts which describe the infra)
+│   │   ├── charts
+│   │   │   ├── demo-service
+│   │   ├── Chart.lock                  (chart lock file to ensure reproducible install)
+│   │   ├── Chart.yaml
+│   │   └── values.yaml
+├── demo-service-repository             (example application)
+│   ├── build.sh                        (build and push the image)
+│   ├── Dockerfile                      
+│   └── kbld.yaml                       (defines what image is build and where to push it)
 ```
 
 ## Prerequisites
@@ -120,13 +128,13 @@ In that case, you can use tools like [kustomize](https://github.com/kubernetes-s
 
 ```sh
 # this approach allows you to patch specific files because file stucture is preserved
-helm template my-app ./umbrella-chart --output-dir ./temp-release
+helm template my-app ./umbrella-chart --output-dir .release
 # this requires a local kustomize.yaml
-kustomize build ./temp-release
+kustomize build .release
 
 # or with ytt, this will template all files and update the original files
-helm template my-app ./umbrella-chart --output-dir ./temp-release
-ytt -f ./temp-release --ignore-unknown-comments --output-files ./temp-release
+helm template my-app ./umbrella-chart --output-dir .release
+ytt -f .release --ignore-unknown-comments --output-files .release
 ```
 
 ### :heavy_check_mark: Helm solves:
@@ -135,79 +143,47 @@ ytt -f ./temp-release --ignore-unknown-comments --output-files ./temp-release
 - [X] Manage dependencies.
 - [X] Distribute configurations.
 
-## The umbrella-state
+## The application repository
 
-The directory `umbrella-state` refers to the single-source-of truth of the desired state of your cluster at a particular commit. The folder contains all kubernetes manifests and `.lock` files. The folder must be committed to git.
+If you practice CI you will test, build and deploy new images continuously in your CI. Every build produce an immutable image tag that must be replaced in your helm manifests. In order to automate and standardize this process, we use [kbld](https://github.com/k14s/kbld). `kbld` handles the workflow for building and pushing images. In your pipeline you need to run:
 
-### :heavy_check_mark: The umbrella-state solves:
+```
+./demo-service-repository/build.sh
+```
 
-- [X] Desired system state versioned in Git.
-- [X] Single-source of truth.
-
-## Build, Test and Push your images
-
-If you practice CI you will test, build and deploy new images continuously in your CI. The image tag must be replaced in your helm manifests. In order to automate and standardize this process, we use [kbld](https://github.com/k14s/kbld). `kbld` handles the workflow for building and pushing images. It integrates with helm and kustomize really well because it doesn't care how manifests are generated.
-
+This command will build and push the image and outputs a `demo-service.kbld.lock` file. This file must be commited to the `config-repository/app-locks` to ensure that every deployment reference to the correct images. This procedure will trigger the CI in the config-repository and allows you to practice Continues-Deployment.
 
 ### Define your application images
 
-Before we can build images, we must create some sources and image destinations so that `kbld` is able to know which images belong to your application. For the sake of simplicity, we put them in `umbrella-chart/kbld-sources.yaml`. They look like `CRD's` but they aren't applied to your cluster.
+Before we can build images, we must create some sources and image destinations so that `kbld` is able to know which images belong to your application. They are managed in the application repository `demo-service-repository/kbld.yaml`. They look like `CRD's` but they aren't applied to your cluster.
 
-```yaml
-#! where to find demo-service source
----
-apiVersion: kbld.k14s.io/v1alpha1
-kind: Sources
-sources:
-- image: demo-service
-  path: demo-service
----
-#! where to push demo-service image
----
-apiVersion: kbld.k14s.io/v1alpha1
-kind: ImageDestinations
-destinations:
-- image: demo-service
-  newImage: docker.io/hk/demo-service
+## The config repository
 
-```
+The directory `config-repository/.release` refers to the temporary desired state of your cluster. It's generated on your CI pipeline. The folder contains all kubernetes manifests files.
 
 ### Release snapshot
 
-This command will prerender your umbrella chart to `.umbrella-state/state.yaml`, builds and push all necessary images and replace all references in your manifests. The result is a snapshot of your desired cluster state. The `kbld.lock.yml` represents a lock file of all tagged images. This is useful to ensure that the exact same images are used on subsequent deployments.
+This command will prerender your umbrella chart to `.release/state.yaml`, builds and push all necessary images and replace all image references in your manifests. It's important to note that no image is build in this step. We reuse all prerendered images references from `app-locks`. The result is a snapshot of your desired cluster state at a particular commit.
 
 ```sh
-# template chart, build / push images to registry and replace images references with immutables tags
-$ helm template my-app ./umbrella-chart | kbld -f - -f umbrella-chart/kbld-sources.yaml --lock-output .umbrella-state/kbld.lock.yml --registry-verify-certs=false > ./.umbrella-state/state.yaml
+$ ./config-repository/render.sh
 ```
 
-#### Update the state in your CI
-
-Every change in the artifact directory `.umbrella-state/` must be commited to git. This means you can reproduce the state at any commit by triggering you CI pipeline. `[ci skip]` is necessary to avoid rescheduling your CI if you commit `.umbrella-state/` in your CI pipeline.
-
-```sh
-git add .umbrella-state/* && git commit -m "[ci skip] New Release"
-```
-
-> :bulb: As shown in the [Chart distribution](#chart-distribution) section. You could use [`kpt`](https://googlecontainertools.github.io/kpt/) to share the state of your repository. This might be useful if you want to point to a specific infrastructure setup. Maybe the production setup which can be adjusted afterwards with [kustomize](https://github.com/kubernetes-sigs/kustomize) or [ytt](https://github.com/k14s/ytt)?
-
-### :heavy_check_mark: kbld / umbrella-state solves:
+### :heavy_check_mark: kbld solves:
 
 - [X] One way to build, tag and push images.
 - [X] Agnostic to how manifests are generated.
 - [X] Desired system state versioned in Git.
-- [X] Single-source of truth.
+- [X] Every commit points to a specific image configuration of all maintained applications.
 
 ## Deployment
 
-We use [kapp](https://github.com/k14s/kapp) to deploy `.umbrella-state/state.yaml` to the kubernetes cluster. `Kapp` ensures that all resources are properly installed in the right order. It provides an enhanced interface to understand what has really changed in your cluster. If you want to learn more you should check the [homepage](https://get-kapp.io/).
+We use [kapp](https://github.com/k14s/kapp) to deploy our resources to kubernetes. `Kapp` ensures that all resources are properly installed in the right order. It provides an enhanced interface to understand what has really changed in your cluster. If you want to learn more you should check the [homepage](https://get-kapp.io/).
 
 ```sh
-# deploy it on your cluster
-$ kapp deploy --yes -n default -a my-app -f ./.umbrella-state/state.yaml
+# deploy it to your cluster
+$ ./config-repository/deploy.sh
 ```
-
-> :warning: Make sure that you don't use helm for releases. This would be incompatible with the GitOps principles because releases aren't stored in git. You rollback your application by switching / cherry-pick to a specific git tag.
 
 > :information_source: Kapp takes user provided config as the only source of truth, but also allows to explicitly specify that certain fields are cluster controlled. This method guarantees that clusters don't drift, which is better than what basic 3 way merge provides. **Source:** https://github.com/k14s/kapp/issues/58#issuecomment-559214883
 
@@ -216,7 +192,7 @@ $ kapp deploy --yes -n default -a my-app -f ./.umbrella-state/state.yaml
 If you need to delete your app. You only need to call:
 
 ```
-$ kapp delete -a my-app --yes
+$ ./config-repository/delete.sh
 ```
 
 > This comes handy, if you need to clean up resources on dynamic environments.
@@ -226,13 +202,9 @@ $ kapp delete -a my-app --yes
 - [X] One way to diffing, labeling, deployment and deletion
 - [X] Agnostic to how manifests are generated.
 
-## Environment Management
+## Environment Management 
 
-Here are some ideas about how you can deal with multiple environments:
-
-- **Monorepo**: Put your infrastructure code along with your code. You can create different branches for different environments.
-- **Multiple repositories**: Create a config-repository which reflect the state of your environment. In that case, you don't need to rebuild your container for config changes and there is no "leading" application repository.
-- **Preview deployments**: Manage a local umbrella-chart that describes the preview-environment. You could also create a config-repository.
+In order to manage multiple environments like development and staging, you can create different branches. Every branch has a different set of image references (stored in `config-repository/app-locks`) and values for your helm charts.
 
 ## Secret Management
 
@@ -244,11 +216,15 @@ In the deployment process, you can decrypt them with a single command. Sops supp
 
 ```sh
 # As a chart maintainer I can encrypt my secrets with:
-find ./temp-release -name "*secret*" -exec sops -e -i {} \;
+find ./.release -name "*secret*" -exec sops -e -i {} \;
 
 # Before deployment I will decrypt my secrets so kubernetes can read them.
 kapp deploy -n default -a my-app -f <(sops -d ./.umbrella-state/state.yaml)
 ```
+
+## Rollback / Releasing
+
+The big strength of GitOps is that any commit represent a releasable version of your infrastructure setup.
 
 ### Controller
 

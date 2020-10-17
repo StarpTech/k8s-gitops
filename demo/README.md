@@ -5,6 +5,7 @@
 The image is pushed to docker hub.
 
 ```
+$ render.sh
 $ deploy.sh
 ```
 

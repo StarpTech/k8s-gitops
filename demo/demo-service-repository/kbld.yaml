@@ -1,10 +1,12 @@
+#! Required reference to trigger build and push
+image: demo-service
 #! where to find demo-service source
 ---
 apiVersion: kbld.k14s.io/v1alpha1
 kind: Sources
 sources:
 - image: demo-service
-  path: demo-service
+  path: .
 ---
 #! where to push demo-service image
 ---
