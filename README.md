@@ -1,5 +1,5 @@
 <p align="center">
-  <img alt="logo" src="https://raw.githubusercontent.com/StarpTech/k8s-gitops/main/logo.png" />
+  <img alt="logo" src="https://raw.githubusercontent.com/StarpTech/k8s-gitops/main/workflow.png" />
   <h3 align="center"><a href="https://helm.sh/">Helm</a> + <a href="https://github.com/k14s/kbld">kbld</a>  + <a href="https://github.com/k14s/kapp">kapp</a></h3>
   <p align="center">The GitOps workflow to manage Kubernetes applications at any scale (without server components).</p>
 </p>
@@ -159,7 +159,7 @@ The directory `config-repository/.release` refers to the temporary desired state
 
 ### Release snapshot
 
-This command will prerender your umbrella chart to `.release/state.yaml`, builds and push all necessary images and replace all image references in your manifests. It's important to note that no image is build in this step. We reuse all prerendered images references from `app-locks`. The result is a snapshot of your desired cluster state at a particular commit.
+This command will prerender your umbrella chart to `config-repository/.release/state.yaml`, builds and push all necessary images and replace all image references in your manifests. It's important to note that no image is build in this step. We reuse all prerendered images references from `app-locks`. The result is a snapshot of your desired cluster state at a particular commit. The CD pipeline will deploy it straight to your cluster.
 
 ```sh
 $ ./config-repository/render.sh
