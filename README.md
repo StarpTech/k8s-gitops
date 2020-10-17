@@ -7,10 +7,6 @@
 
 # Preface
 
-<p align="center">
-  <img alt="logo" src="https://raw.githubusercontent.com/StarpTech/k8s-gitops/main/workflow.png" />
-</p>
-
 >  Technology should not make our lives harder. Choosing a specific technology should not change the way you do something very basic so drastically that it's harder to use, as opposed to easier to use. That's the whole point of technology. - Chris Short
 
 This guide describes a CI/CD workflow for Kubernetes that enables [GitOps](https://www.weave.works/technologies/gitops/) without relying on server components.
@@ -251,7 +247,3 @@ Check out the [demo](./demo) to see how it looks like.
 - [k14s-kubernetes-tools](https://tanzu.vmware.com/content/blog/introducing-k14s-kubernetes-tools-simple-and-composable-tools-for-application-deployment)
 - [why-is-a-pull-vs-a-push-pipeline-important](https://www.weave.works/blog/why-is-a-pull-vs-a-push-pipeline-important)
 - [The best CI/CD tool for kuberneets doesn't exist](https://thenewstack.io/the-best-ci-cd-tool-for-kubernetes-doesnt-exist/)
-
-## Credits
-
-The logo is provided by [icons8.de](https://icons8.de)
