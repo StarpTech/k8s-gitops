@@ -47,7 +47,8 @@ We consider each directory as a seperate repository. That should reflect a real 
 ├── demo-service-repository             (example application)
 │   ├── build.sh                        (build and push the image)
 │   ├── Dockerfile                      
-│   └── kbld.yaml                       (defines what image is build and where to push it)
+│   ├── kbld.yaml                       (defines what image is build and where to push it)
+└   └── umbrella-chart                  (describe the preview environment "optional")
 ```
 
 ## Prerequisites
