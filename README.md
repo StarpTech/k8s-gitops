@@ -11,7 +11,7 @@
 
 This guide describes a CI/CD workflow for Kubernetes that enables [GitOps](https://www.weave.works/technologies/gitops/) without relying on server components.
 
-There are many tools to practice GitOps. ArgoCD and FluxCD are the successors of it. Both tools are great but come with a high cost. You need to manage a complex piece of software (kubernetes operator) in your cluster and it couples you to very specific solutions ([CRD's](https://kubernetes.io/docs/concepts/extend-kubernetes/api-extension/custom-resources/)). Additionally, they enforce a [Pull](https://www.weave.works/blog/why-is-a-pull-vs-a-push-pipeline-important) based CD workflow. I can't get used to practicing this flow because it feels cumbersome although I'm aware of the benefits:
+There are many tools to practice GitOps. ArgoCD and FluxCD are the successors of it. Both tools are great but come with a high cost. You need to manage a [complex `121 Open issues`](https://github.com/fluxcd/flux/issues?q=is%3Aissue+is%3Aopen+sort%3Aupdated-desc+label%3Abug) piece of software (kubernetes operator) in your cluster and it couples you to very specific solutions ([CRD's](https://kubernetes.io/docs/concepts/extend-kubernetes/api-extension/custom-resources/)). Additionally, they enforce a [Pull](https://www.weave.works/blog/why-is-a-pull-vs-a-push-pipeline-important) based CD workflow. I can't get used to practicing this flow because it feels cumbersome although I'm aware of the benefits:
 
 - Automated updates of images without a connection to your cluster.
 - Two-way synchronization (docker registry, config-repository)
