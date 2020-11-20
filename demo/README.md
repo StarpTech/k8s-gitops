@@ -22,5 +22,5 @@ $ ./config-repository/deploy.sh
 All resources are deleted.
 
 ```
-$ delete.sh
+$ ./config-repository/delete.sh
 ```
