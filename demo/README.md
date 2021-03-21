@@ -2,7 +2,7 @@
 
 ## Build app
 
-TBuild and push the image.
+Build and push the image.
 
 ```
 $ ./demo-service-repository/build.sh
