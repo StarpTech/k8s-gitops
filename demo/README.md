@@ -10,7 +10,7 @@ $ ./demo-service-repository/build.sh
 
 ## Deploy app
 
-The image is deployed to yyour cluster.
+The image is deployed to your cluster.
 
 ```
 $ ./config-repository/render.sh
